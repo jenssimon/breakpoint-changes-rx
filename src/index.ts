@@ -50,7 +50,7 @@ export const parseBreakpoints = (object: object, config?: BreakpointParseConfig)
   };
   return Object.entries(object).reduce((obj, [key, value]) => {
     const breakpointMatch = key.match(parseConfig.regex as RegExp);
-    if (breakpointMatch) {
+    if (breakpointMatch && typeof value === 'string') {
       const name = breakpointMatch[parseConfig.groupName as number];
       const minMax = (parseConfig.isMin as BreakpointMinMaxDetector)(breakpointMatch[
         parseConfig.groupMinMax as number]);

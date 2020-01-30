@@ -1,11 +1,14 @@
 {
   "name": "breakpoint-changes-rx",
   "version": "1.0.0",
-  "main": "index.js",
   "repository": "git@github.com:jenssimon/breakpoint-changes-rx.git",
   "author": "Jens Simon <jens.simon80@googlemail.com>",
   "license": "MIT",
   "private": false,
+  "main": "dist/breakpoint-changes-rx.cjs.js",
+  "module": "dist/breakpoint-changes-rx.esm.js",
+  "browser": "dist/breakpoint-changes-rx.umd.js",
+  "types": "./dist/index.d.ts",
   "scripts": {
     "lint": "eslint --fix --ext .tsx,.ts,.jsx,.js ./ && tsc",
     "build": "rollup -c",
@@ -16,9 +19,12 @@
   "devDependencies": {
     "@jenssimon/eslint-config-base": "^1.4.3",
     "@jenssimon/eslint-config-typescript": "^1.0.0",
+    "@rollup/plugin-commonjs": "^11.0.1",
+    "@types/jest": "^25.1.1",
     "@typescript-eslint/eslint-plugin": "^2.18.0",
     "@typescript-eslint/parser": "^2.18.0",
     "babel-eslint": "^10.0.3",
+    "coveralls": "^3.0.9",
     "eslint": "^6.8.0",
     "eslint-config-airbnb": "^18.0.1",
     "eslint-config-airbnb-base": "^14.0.0",
@@ -33,7 +39,14 @@
     "eslint-plugin-react": "^7.18.0",
     "eslint-plugin-react-hooks": "^2.3.0",
     "eslint-plugin-you-dont-need-lodash-underscore": "^6.9.0",
+    "jest": "^25.1.0",
+    "rollup": "^1.30.1",
+    "rollup-plugin-typescript2": "^0.25.3",
     "rxjs": "^6.5.4",
+    "ts-jest": "^25.1.0",
     "typescript": "^3.7.5"
+  },
+  "peerDependencies": {
+    "rxjs": ">=6"
   }
 }
