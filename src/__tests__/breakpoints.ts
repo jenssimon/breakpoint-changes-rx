@@ -53,9 +53,31 @@ describe('parseBreakpoints', () => {
     })).toStrictEqual({
       xm: { max: '500px', maxInt: 500 },
     });
-  });
 
-  /* it('returns the current breakpoints', () => {
-    expect(getCurrentBreakpoints()).toEqual(['md']);
-  }); */
+    expect(parseBreakpoints({
+      'breakpoint-sm-min': '767px',
+      'breakpoint-xm-mini': '500px',
+    }, {
+      regex: /^breakpoint-(\w*)-((maxi)|(mini))$/,
+      isMin: (value) => value === 'mini',
+    })).toStrictEqual({
+      xm: { min: '500px', minInt: 500 },
+    });
+  });
+});
+
+describe('breakpoints', () => {
+  it('works', () => {
+    const bp = breakpoints({
+      sm: { max: '767px', maxInt: 767 },
+      md: {
+        min: '768px', minInt: 768, max: '991px', maxInt: 991,
+      },
+      lg: {
+        min: '992px', minInt: 992, max: '1199px', maxInt: 1199,
+      },
+      xl: { min: '1200px', minInt: 1200 },
+    });
+    expect(bp).toBeDefined(); // TODO add some useful tests
+  });
 });
