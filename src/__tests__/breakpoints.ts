@@ -1,4 +1,4 @@
-import '../__mocks__/matchMedia.mock';
+// import '../__mocks__/matchMedia.mock';
 import breakpoints, { parseBreakpoints } from '../index';
 
 describe('parseBreakpoints', () => {
@@ -67,7 +67,23 @@ describe('parseBreakpoints', () => {
 });
 
 describe('breakpoints', () => {
-  it('works', () => {
+  it('initializes with one detected breakpoint', () => {
+    const matchMediaQueries: string[] = [];
+    const listenerMock = jest.fn();
+    const matchMediaImpl = jest.fn().mockImplementation((query) => {
+      matchMediaQueries.push(query);
+      return {
+        matches: query === '(min-width: 992px) and (max-width: 1199px)',
+        media: query,
+        onchange: null,
+        addListener: listenerMock,
+      };
+    });
+    Object.defineProperty(window, 'matchMedia', {
+      writable: true,
+      value: matchMediaImpl,
+    });
+
     const bp = breakpoints({
       sm: { max: '767px', maxInt: 767 },
       md: {
@@ -78,6 +94,30 @@ describe('breakpoints', () => {
       },
       xl: { min: '1200px', minInt: 1200 },
     });
-    expect(bp).toBeDefined(); // TODO add some useful tests
+    expect(matchMediaImpl).toHaveBeenCalledTimes(4);
+
+    expect(matchMediaQueries).toContain('(max-width: 767px)');
+    expect(matchMediaQueries).toContain('(min-width: 768px) and (max-width: 991px)');
+    expect(matchMediaQueries).toContain('(min-width: 992px) and (max-width: 1199px)');
+    expect(matchMediaQueries).toContain('(min-width: 1200px)');
+
+    expect(listenerMock).toHaveBeenCalledTimes(4);
+
+    expect(bp.getCurrentBreakpoints()).toStrictEqual(['lg']);
+
+    expect(bp.includesBreakpoint('sm')).toBe(false);
+    expect(bp.includesBreakpoint('md')).toBe(false);
+    expect(bp.includesBreakpoint('lg')).toBe(true);
+    expect(bp.includesBreakpoint('xl')).toBe(false);
+    expect(bp.includesBreakpoint('foo')).toBe(false);
+
+    expect(bp.includesBreakpoints(['sm'])).toBe(false);
+    expect(bp.includesBreakpoints(['md'])).toBe(false);
+    expect(bp.includesBreakpoints(['lg'])).toBe(true);
+    expect(bp.includesBreakpoints(['xl'])).toBe(false);
+    expect(bp.includesBreakpoints(['foo'])).toBe(false);
+
+    expect(bp.includesBreakpoints(['sm', 'md'])).toBe(false);
+    expect(bp.includesBreakpoints(['lg', 'xl'])).toBe(true);
   });
 });
