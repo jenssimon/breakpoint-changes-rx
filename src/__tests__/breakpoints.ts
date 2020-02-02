@@ -76,7 +76,7 @@ describe('parseBreakpoints', () => {
   });
 });
 
-describe('breakpoints', () => {
+describe('initialization and detect breakpoints on init', () => {
   it('initializes with one detected breakpoint', () => {
     const matchMediaQueries: string[] = [];
     const listenerMock = jest.fn();
@@ -180,5 +180,63 @@ describe('breakpoints', () => {
     expect(bp.includesBreakpoints(['mdx', 'lg'])).toBe(true);
     expect(bp.includesBreakpoints(['mdy', 'lg'])).toBe(false);
     expect(bp.includesBreakpoints(['lg', 'xl'])).toBe(false);
+  });
+});
+
+describe('detect breakpoint changes', () => {
+  it('detects breakpoint change (single breakpoint scenario)', () => {
+    jest.useFakeTimers();
+    const matchMediaQueries: string[] = [];
+    const mqlListeners: Map<string, Function> = new Map();
+    const matchMediaImpl = jest.fn().mockImplementation((query) => {
+      matchMediaQueries.push(query);
+      return {
+        matches: [
+          '(min-width: 992px) and (max-width: 1199px)',
+        ].includes(query),
+        media: query,
+        onchange: null,
+        addListener: (fnc: Function): void => {
+          mqlListeners.set(query, fnc);
+        },
+      };
+    });
+    Object.defineProperty(window, 'matchMedia', {
+      writable: true,
+      value: matchMediaImpl,
+    });
+
+    const bp = breakpoints(testBreakpointData(false));
+
+    expect(bp.getCurrentBreakpoints()).toStrictEqual(['lg']);
+
+    const breakpointChangesObservable = jest.fn();
+    bp.breakpointsChanges$.subscribe(breakpointChangesObservable);
+    const mdObservable = jest.fn();
+    bp.breakpointsChange('md').subscribe(mdObservable);
+    const lgObservable = jest.fn();
+    bp.breakpointsChange('lg').subscribe(lgObservable);
+    const breakpointRangeObservable = jest.fn();
+    bp.breakpointsInRange(['sm', 'md']).subscribe(breakpointRangeObservable);
+
+    const mdListener = mqlListeners.get('(min-width: 768px) and (max-width: 991px)');
+    const lgListener = mqlListeners.get('(min-width: 992px) and (max-width: 1199px)');
+    if (mdListener && lgListener) {
+      mdListener({ matches: true });
+      lgListener({ matches: false });
+    }
+    jest.runOnlyPendingTimers();
+
+    expect(breakpointChangesObservable).toHaveBeenCalledTimes(1);
+    expect(breakpointChangesObservable.mock.calls[0][0]).toStrictEqual({ curr: ['md'], prev: ['lg'] });
+
+    expect(mdObservable).toHaveBeenCalledTimes(1);
+    expect(mdObservable.mock.calls[0][0]).toBe(true);
+
+    expect(lgObservable).toHaveBeenCalledTimes(1);
+    expect(lgObservable.mock.calls[0][0]).toBe(false);
+
+    expect(breakpointRangeObservable).toHaveBeenCalledTimes(1);
+    expect(breakpointRangeObservable.mock.calls[0][0]).toBe(true);
   });
 });
