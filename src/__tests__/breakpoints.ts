@@ -1,5 +1,24 @@
 // import '../__mocks__/matchMedia.mock';
-import breakpoints, { parseBreakpoints } from '../index';
+import breakpoints, { parseBreakpoints, BreakpointDefinitions } from '../index';
+
+const testBreakpointData = (multipleMatches = false): BreakpointDefinitions => ({
+  sm: { max: '767px', maxInt: 767 },
+  md: {
+    min: '768px', minInt: 768, max: '991px', maxInt: 991,
+  },
+  lg: {
+    min: '992px', minInt: 992, max: '1199px', maxInt: 1199,
+  },
+  xl: { min: '1200px', minInt: 1200 },
+  ...multipleMatches ? {
+    mdx: {
+      min: '768px', minInt: 768, max: '849px', maxInt: 849,
+    },
+    mdy: {
+      min: '850px', minInt: 850, max: '991px', maxInt: 991,
+    },
+  } : {},
+});
 
 describe('parseBreakpoints', () => {
   it('parses breakpoint information from a possible return value of a CSS module', () => {
@@ -14,16 +33,7 @@ describe('parseBreakpoints', () => {
       'breakpoint-md-min': '768px',
       'breakpoint-lg-max': '1199px',
       baz: 123,
-    })).toStrictEqual({
-      sm: { max: '767px', maxInt: 767 },
-      md: {
-        min: '768px', minInt: 768, max: '991px', maxInt: 991,
-      },
-      lg: {
-        min: '992px', minInt: 992, max: '1199px', maxInt: 1199,
-      },
-      xl: { min: '1200px', minInt: 1200 },
-    });
+    })).toStrictEqual(testBreakpointData());
   });
 
   it('can use a custom config', () => {
@@ -84,16 +94,7 @@ describe('breakpoints', () => {
       value: matchMediaImpl,
     });
 
-    const bp = breakpoints({
-      sm: { max: '767px', maxInt: 767 },
-      md: {
-        min: '768px', minInt: 768, max: '991px', maxInt: 991,
-      },
-      lg: {
-        min: '992px', minInt: 992, max: '1199px', maxInt: 1199,
-      },
-      xl: { min: '1200px', minInt: 1200 },
-    });
+    const bp = breakpoints(testBreakpointData());
     expect(matchMediaImpl).toHaveBeenCalledTimes(4);
 
     expect(matchMediaQueries).toContain('(max-width: 767px)');
@@ -119,5 +120,65 @@ describe('breakpoints', () => {
 
     expect(bp.includesBreakpoints(['sm', 'md'])).toBe(false);
     expect(bp.includesBreakpoints(['lg', 'xl'])).toBe(true);
+  });
+
+  it('initializes with multiple detected breakpoints', () => {
+    const matchMediaQueries: string[] = [];
+    const listenerMock = jest.fn();
+    const matchMediaImpl = jest.fn().mockImplementation((query) => {
+      matchMediaQueries.push(query);
+      return {
+        matches: [
+          '(min-width: 768px) and (max-width: 991px)',
+          '(min-width: 768px) and (max-width: 849px)',
+        ].includes(query),
+        media: query,
+        onchange: null,
+        addListener: listenerMock,
+      };
+    });
+    Object.defineProperty(window, 'matchMedia', {
+      writable: true,
+      value: matchMediaImpl,
+    });
+
+    const bp = breakpoints(testBreakpointData(true));
+    expect(matchMediaImpl).toHaveBeenCalledTimes(6);
+
+    expect(matchMediaQueries).toContain('(max-width: 767px)');
+    expect(matchMediaQueries).toContain('(min-width: 768px) and (max-width: 991px)');
+    expect(matchMediaQueries).toContain('(min-width: 768px) and (max-width: 849px)');
+    expect(matchMediaQueries).toContain('(min-width: 850px) and (max-width: 991px)');
+    expect(matchMediaQueries).toContain('(min-width: 992px) and (max-width: 1199px)');
+    expect(matchMediaQueries).toContain('(min-width: 1200px)');
+
+    expect(listenerMock).toHaveBeenCalledTimes(6);
+
+    expect(bp.getCurrentBreakpoints()).toStrictEqual(['md', 'mdx']);
+
+    expect(bp.includesBreakpoint('sm')).toBe(false);
+    expect(bp.includesBreakpoint('md')).toBe(true);
+    expect(bp.includesBreakpoint('mdx')).toBe(true);
+    expect(bp.includesBreakpoint('mdy')).toBe(false);
+    expect(bp.includesBreakpoint('lg')).toBe(false);
+    expect(bp.includesBreakpoint('xl')).toBe(false);
+    expect(bp.includesBreakpoint('foo')).toBe(false);
+
+    expect(bp.includesBreakpoints(['sm'])).toBe(false);
+    expect(bp.includesBreakpoints(['md'])).toBe(true);
+    expect(bp.includesBreakpoints(['mdx'])).toBe(true);
+    expect(bp.includesBreakpoints(['mdy'])).toBe(false);
+    expect(bp.includesBreakpoints(['lg'])).toBe(false);
+    expect(bp.includesBreakpoints(['xl'])).toBe(false);
+    expect(bp.includesBreakpoints(['foo'])).toBe(false);
+
+    expect(bp.includesBreakpoints(['sm', 'md'])).toBe(true);
+    expect(bp.includesBreakpoints(['md', 'mdx'])).toBe(true);
+    expect(bp.includesBreakpoints(['md', 'mdy'])).toBe(true);
+    expect(bp.includesBreakpoints(['md', 'lg'])).toBe(true);
+    expect(bp.includesBreakpoints(['mdx', 'mdy'])).toBe(true);
+    expect(bp.includesBreakpoints(['mdx', 'lg'])).toBe(true);
+    expect(bp.includesBreakpoints(['mdy', 'lg'])).toBe(false);
+    expect(bp.includesBreakpoints(['lg', 'xl'])).toBe(false);
   });
 });
