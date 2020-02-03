@@ -107,10 +107,11 @@ const breakpoints = (breakpointDefinitions: BreakpointDefinitions): {
       actual.forEach(({ matches, name }) => {
         if (!matches) {
           const idx = curr.indexOf(name);
+          /* istanbul ignore next */
           if (idx !== -1) {
             curr.splice(idx, 1);
           }
-        } else if (!curr.includes(name)) {
+        } else /* istanbul ignore next */ if (!curr.includes(name)) {
           curr.push(name);
         }
       });
