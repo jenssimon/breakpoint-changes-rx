@@ -310,4 +310,111 @@ describe('detect breakpoint changes', () => {
     expect(breakpointRangeObservable).toHaveBeenCalledTimes(2);
     expect(breakpointRangeObservable.mock.calls[1][0]).toBe(false);
   });
+
+  it('detects breakpoint change (multiple breakpoint scenario)', () => {
+    const bpData = testBreakpointData(true);
+    jest.useFakeTimers();
+    const matchMediaQueries: string[] = [];
+    const mqlListeners: Map<string, Function> = new Map();
+    const matchMediaImpl = jest.fn().mockImplementation((query) => {
+      matchMediaQueries.push(query);
+      return {
+        matches: [
+          mqFor('lg', bpData),
+        ].includes(query),
+        media: query,
+        onchange: null,
+        addListener: (fnc: Function): void => {
+          mqlListeners.set(query, fnc);
+        },
+      };
+    });
+    Object.defineProperty(window, 'matchMedia', {
+      writable: true,
+      value: matchMediaImpl,
+    });
+
+    const bp = breakpoints(bpData);
+
+    const breakpointChangesObservable = jest.fn();
+    bp.breakpointsChanges$.subscribe(breakpointChangesObservable);
+    const mdObservable = jest.fn();
+    bp.breakpointsChange('md').subscribe(mdObservable);
+    const mdxObservable = jest.fn();
+    bp.breakpointsChange('mdx').subscribe(mdxObservable);
+    const mdyObservable = jest.fn();
+    bp.breakpointsChange('mdy').subscribe(mdyObservable);
+    const lgObservable = jest.fn();
+    bp.breakpointsChange('lg').subscribe(lgObservable);
+    const breakpointRangeObservable = jest.fn();
+    bp.breakpointsInRange(['sm', 'md']).subscribe(breakpointRangeObservable);
+
+    const mdListener = mqlListeners.get(mqFor('md', bpData)) as Function;
+    const mdxListener = mqlListeners.get(mqFor('mdx', bpData)) as Function;
+    const mdyListener = mqlListeners.get(mqFor('mdy', bpData)) as Function;
+    const lgListener = mqlListeners.get(mqFor('lg', bpData)) as Function;
+    mdListener({ matches: true });
+    mdxListener({ matches: true });
+    lgListener({ matches: false });
+    jest.runOnlyPendingTimers();
+
+    expect(breakpointChangesObservable).toHaveBeenCalledTimes(1);
+    expect(breakpointChangesObservable.mock.calls[0][0]).toStrictEqual({ curr: ['md', 'mdx'], prev: ['lg'] });
+
+    expect(mdObservable).toHaveBeenCalledTimes(1);
+    expect(mdObservable.mock.calls[0][0]).toBe(true);
+
+    expect(mdxObservable).toHaveBeenCalledTimes(1);
+    expect(mdxObservable.mock.calls[0][0]).toBe(true);
+
+    expect(mdyObservable).toHaveBeenCalledTimes(0);
+
+    expect(lgObservable).toHaveBeenCalledTimes(1);
+    expect(lgObservable.mock.calls[0][0]).toBe(false);
+
+    expect(breakpointRangeObservable).toHaveBeenCalledTimes(1);
+    expect(breakpointRangeObservable.mock.calls[0][0]).toBe(true);
+
+    mdxListener({ matches: false });
+    mdyListener({ matches: true });
+    jest.runOnlyPendingTimers();
+
+    expect(breakpointChangesObservable).toHaveBeenCalledTimes(2);
+    expect(breakpointChangesObservable.mock.calls[1][0]).toStrictEqual({ curr: ['md', 'mdy'], prev: ['md', 'mdx'] });
+
+    expect(mdObservable).toHaveBeenCalledTimes(2); // TODO maybe this shouldn't happen
+    expect(mdObservable.mock.calls[1][0]).toBe(true);
+
+    expect(mdxObservable).toHaveBeenCalledTimes(2);
+    expect(mdxObservable.mock.calls[1][0]).toBe(false);
+
+    expect(mdyObservable).toHaveBeenCalledTimes(1);
+    expect(mdyObservable.mock.calls[0][0]).toBe(true);
+
+    expect(lgObservable).toHaveBeenCalledTimes(1);
+
+    expect(breakpointRangeObservable).toHaveBeenCalledTimes(1);
+
+    mdListener({ matches: false });
+    mdyListener({ matches: false });
+    lgListener({ matches: true });
+    jest.runOnlyPendingTimers();
+
+    expect(breakpointChangesObservable).toHaveBeenCalledTimes(3);
+    expect(breakpointChangesObservable.mock.calls[2][0]).toStrictEqual({ curr: ['lg'], prev: ['md', 'mdy'] });
+
+    expect(mdObservable).toHaveBeenCalledTimes(3);
+    expect(mdObservable.mock.calls[2][0]).toBe(false);
+
+    expect(mdxObservable).toHaveBeenCalledTimes(2);
+
+    expect(mdyObservable).toHaveBeenCalledTimes(2);
+    expect(mdyObservable.mock.calls[1][0]).toBe(false);
+
+    expect(lgObservable).toHaveBeenCalledTimes(2);
+    expect(lgObservable.mock.calls[1][0]).toBe(true);
+
+    expect(breakpointRangeObservable).toHaveBeenCalledTimes(2);
+    expect(breakpointRangeObservable.mock.calls[1][0]).toBe(false);
+  });
 });
