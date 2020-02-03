@@ -247,6 +247,8 @@ describe('detect breakpoint changes', () => {
 
     const breakpointChangesObservable = jest.fn();
     bp.breakpointsChanges$.subscribe(breakpointChangesObservable);
+    const smObservable = jest.fn();
+    bp.breakpointsChange('sm').subscribe(smObservable);
     const mdObservable = jest.fn();
     bp.breakpointsChange('md').subscribe(mdObservable);
     const lgObservable = jest.fn();
@@ -254,12 +256,11 @@ describe('detect breakpoint changes', () => {
     const breakpointRangeObservable = jest.fn();
     bp.breakpointsInRange(['sm', 'md']).subscribe(breakpointRangeObservable);
 
-    const mdListener = mqlListeners.get(mqFor('md', bpData));
-    const lgListener = mqlListeners.get(mqFor('lg', bpData));
-    if (mdListener && lgListener) {
-      mdListener({ matches: true });
-      lgListener({ matches: false });
-    }
+    const smListener = mqlListeners.get(mqFor('sm', bpData)) as Function;
+    const mdListener = mqlListeners.get(mqFor('md', bpData)) as Function;
+    const lgListener = mqlListeners.get(mqFor('lg', bpData)) as Function;
+    mdListener({ matches: true });
+    lgListener({ matches: false });
     jest.runOnlyPendingTimers();
 
     expect(breakpointChangesObservable).toHaveBeenCalledTimes(1);
@@ -273,5 +274,40 @@ describe('detect breakpoint changes', () => {
 
     expect(breakpointRangeObservable).toHaveBeenCalledTimes(1);
     expect(breakpointRangeObservable.mock.calls[0][0]).toBe(true);
+
+    mdListener({ matches: false });
+    smListener({ matches: true });
+    jest.runOnlyPendingTimers();
+
+    expect(breakpointChangesObservable).toHaveBeenCalledTimes(2);
+    expect(breakpointChangesObservable.mock.calls[1][0]).toStrictEqual({ curr: ['sm'], prev: ['md'] });
+
+    expect(mdObservable).toHaveBeenCalledTimes(2);
+    expect(mdObservable.mock.calls[1][0]).toBe(false);
+
+    expect(lgObservable).toHaveBeenCalledTimes(1);
+
+    expect(smObservable).toHaveBeenCalledTimes(1);
+    expect(smObservable.mock.calls[0][0]).toBe(true);
+
+    expect(breakpointRangeObservable).toHaveBeenCalledTimes(1);
+
+    smListener({ matches: false });
+    lgListener({ matches: true });
+    jest.runOnlyPendingTimers();
+
+    expect(breakpointChangesObservable).toHaveBeenCalledTimes(3);
+    expect(breakpointChangesObservable.mock.calls[2][0]).toStrictEqual({ curr: ['lg'], prev: ['sm'] });
+
+    expect(mdObservable).toHaveBeenCalledTimes(2);
+
+    expect(lgObservable).toHaveBeenCalledTimes(2);
+    expect(lgObservable.mock.calls[1][0]).toBe(true);
+
+    expect(smObservable).toHaveBeenCalledTimes(2);
+    expect(smObservable.mock.calls[1][0]).toBe(false);
+
+    expect(breakpointRangeObservable).toHaveBeenCalledTimes(2);
+    expect(breakpointRangeObservable.mock.calls[1][0]).toBe(false);
   });
 });
