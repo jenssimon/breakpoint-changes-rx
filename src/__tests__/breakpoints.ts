@@ -382,8 +382,7 @@ describe('detect breakpoint changes', () => {
     expect(breakpointChangesObservable).toHaveBeenCalledTimes(2);
     expect(breakpointChangesObservable.mock.calls[1][0]).toStrictEqual({ curr: ['md', 'mdy'], prev: ['md', 'mdx'] });
 
-    expect(mdObservable).toHaveBeenCalledTimes(2); // TODO maybe this shouldn't happen
-    expect(mdObservable.mock.calls[1][0]).toBe(true);
+    expect(mdObservable).toHaveBeenCalledTimes(1);
 
     expect(mdxObservable).toHaveBeenCalledTimes(2);
     expect(mdxObservable.mock.calls[1][0]).toBe(false);
@@ -403,8 +402,8 @@ describe('detect breakpoint changes', () => {
     expect(breakpointChangesObservable).toHaveBeenCalledTimes(3);
     expect(breakpointChangesObservable.mock.calls[2][0]).toStrictEqual({ curr: ['lg'], prev: ['md', 'mdy'] });
 
-    expect(mdObservable).toHaveBeenCalledTimes(3);
-    expect(mdObservable.mock.calls[2][0]).toBe(false);
+    expect(mdObservable).toHaveBeenCalledTimes(2);
+    expect(mdObservable.mock.calls[1][0]).toBe(false);
 
     expect(mdxObservable).toHaveBeenCalledTimes(2);
 

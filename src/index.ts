@@ -159,8 +159,8 @@ const breakpoints = (breakpointDefinitions: BreakpointDefinitions): {
    * @returns an Observerable containing entering/leaving the breakpoint
    */
   const breakpointsChange = (bp: string): Observable<boolean> => breakpointsChanges$.pipe(
-    // TODO: breakpoints change
     filter(({ curr, prev }) => [curr, prev].some((b) => breakpointListContainsBreakpoint(b, bp))),
+    filter(({ curr, prev}) => curr.includes(bp) !== prev.includes(bp)),
     map(({ curr }) => curr.includes(bp)),
   );
 
