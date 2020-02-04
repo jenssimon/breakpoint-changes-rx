@@ -8,14 +8,20 @@ import breakpoints, { parseBreakpoints, BreakpointDefinitions } from '../index';
  * @return breakpoint data
  */
 const testBreakpointData = (multipleMatches = false): BreakpointDefinitions => ({
-  sm: { max: '767px', maxInt: 767 },
+  sm: {
+    max: '767px', maxInt: 767,
+  },
   md: {
     min: '768px', minInt: 768, max: '991px', maxInt: 991,
   },
   lg: {
     min: '992px', minInt: 992, max: '1199px', maxInt: 1199,
   },
-  xl: { min: '1200px', minInt: 1200 },
+  xl: {
+    min: '1200px', minInt: 1200,
+  },
+
+  // for multiple matches add additional breakpoints
   ...multipleMatches ? {
     mdx: {
       min: '768px', minInt: 768, max: '849px', maxInt: 849,
@@ -26,6 +32,13 @@ const testBreakpointData = (multipleMatches = false): BreakpointDefinitions => (
   } : {},
 });
 
+/**
+ * Generates a media query for a breakpoint.
+ *
+ * @param breakpoint  the name of the breakpoint
+ * @param bps  the breakpoint definitions
+ * @return the media query for the breakpoint
+ */
 const mqFor = (breakpoint: string, bps: BreakpointDefinitions): string => (Object.entries(bps)
   .filter(([name]) => name === breakpoint)
   .map(([, { min, max }]): string => [['min', min], ['max', max]]
@@ -34,6 +47,9 @@ const mqFor = (breakpoint: string, bps: BreakpointDefinitions): string => (Objec
     .join(' and '))
 ).reduce((prev, curr) => curr);
 
+/*
+ * parseBreakpoints()
+ */
 describe('parseBreakpoints', () => {
   it('parses breakpoint information from a possible return value of a CSS module', () => {
     expect(parseBreakpoints({
@@ -98,7 +114,7 @@ describe('initialization and detect breakpoints on init', () => {
     const matchMediaImpl = jest.fn().mockImplementation((query) => {
       matchMediaQueries.push(query);
       return {
-        matches: query === mqFor('lg', bpData),
+        matches: query === mqFor('lg', bpData), // "lg" matches
         media: query,
         onchange: null,
         addListener: listenerMock,
@@ -110,14 +126,15 @@ describe('initialization and detect breakpoints on init', () => {
     });
 
     const bp = breakpoints(bpData);
-    expect(matchMediaImpl).toHaveBeenCalledTimes(4);
+    expect(matchMediaImpl).toHaveBeenCalledTimes(4); // 4 breakpoints -> 4 matchMedia calls
 
+    // are the correct media queries used?
     expect(matchMediaQueries).toContain(mqFor('sm', bpData));
     expect(matchMediaQueries).toContain(mqFor('md', bpData));
     expect(matchMediaQueries).toContain(mqFor('lg', bpData));
     expect(matchMediaQueries).toContain(mqFor('xl', bpData));
 
-    expect(listenerMock).toHaveBeenCalledTimes(4);
+    expect(listenerMock).toHaveBeenCalledTimes(4); // listeners for all media queries added?
 
     expect(bp.getCurrentBreakpoints()).toStrictEqual(['lg']);
 
@@ -130,12 +147,14 @@ describe('initialization and detect breakpoints on init', () => {
     expect(bpBehaviorSubscriber).toHaveBeenCalledTimes(1);
     expect(bpBehaviorSubscriber.mock.calls[0][0]).toStrictEqual({ curr: ['lg'], prev: [] });
 
+    // includesBreakpoint()
     expect(bp.includesBreakpoint('sm')).toBe(false);
     expect(bp.includesBreakpoint('md')).toBe(false);
     expect(bp.includesBreakpoint('lg')).toBe(true);
     expect(bp.includesBreakpoint('xl')).toBe(false);
     expect(bp.includesBreakpoint('foo')).toBe(false);
 
+    // includesBreakpoints()
     expect(bp.includesBreakpoints(['sm'])).toBe(false);
     expect(bp.includesBreakpoints(['md'])).toBe(false);
     expect(bp.includesBreakpoints(['lg'])).toBe(true);
@@ -154,6 +173,7 @@ describe('initialization and detect breakpoints on init', () => {
       matchMediaQueries.push(query);
       return {
         matches: [
+          // "md" and "mdx" matches
           mqFor('md', bpData),
           mqFor('mdx', bpData),
         ].includes(query),
@@ -168,7 +188,7 @@ describe('initialization and detect breakpoints on init', () => {
     });
 
     const bp = breakpoints(bpData);
-    expect(matchMediaImpl).toHaveBeenCalledTimes(6);
+    expect(matchMediaImpl).toHaveBeenCalledTimes(6); // 6 breakpoints -> 6 matchMedia calls
 
     const bpSubscriber = jest.fn();
     bp.breakpointsChanges$.subscribe(bpSubscriber);
@@ -190,6 +210,7 @@ describe('initialization and detect breakpoints on init', () => {
 
     expect(bp.getCurrentBreakpoints()).toStrictEqual(['md', 'mdx']);
 
+    // includesBreakpoint()
     expect(bp.includesBreakpoint('sm')).toBe(false);
     expect(bp.includesBreakpoint('md')).toBe(true);
     expect(bp.includesBreakpoint('mdx')).toBe(true);
@@ -198,6 +219,7 @@ describe('initialization and detect breakpoints on init', () => {
     expect(bp.includesBreakpoint('xl')).toBe(false);
     expect(bp.includesBreakpoint('foo')).toBe(false);
 
+    // includesBreakpoints()
     expect(bp.includesBreakpoints(['sm'])).toBe(false);
     expect(bp.includesBreakpoints(['md'])).toBe(true);
     expect(bp.includesBreakpoints(['mdx'])).toBe(true);
@@ -227,7 +249,7 @@ describe('detect breakpoint changes', () => {
       matchMediaQueries.push(query);
       return {
         matches: [
-          mqFor('lg', bpData),
+          mqFor('lg', bpData), // initial match "lg"
         ].includes(query),
         media: query,
         onchange: null,
@@ -259,6 +281,8 @@ describe('detect breakpoint changes', () => {
     const smListener = mqlListeners.get(mqFor('sm', bpData)) as Function;
     const mdListener = mqlListeners.get(mqFor('md', bpData)) as Function;
     const lgListener = mqlListeners.get(mqFor('lg', bpData)) as Function;
+
+    // change to "md"
     mdListener({ matches: true });
     lgListener({ matches: false });
     jest.runOnlyPendingTimers();
@@ -275,6 +299,7 @@ describe('detect breakpoint changes', () => {
     expect(breakpointRangeObservable).toHaveBeenCalledTimes(1);
     expect(breakpointRangeObservable.mock.calls[0][0]).toBe(true);
 
+    // change to "sm"
     mdListener({ matches: false });
     smListener({ matches: true });
     jest.runOnlyPendingTimers();
@@ -292,6 +317,7 @@ describe('detect breakpoint changes', () => {
 
     expect(breakpointRangeObservable).toHaveBeenCalledTimes(1);
 
+    // change to "lg"
     smListener({ matches: false });
     lgListener({ matches: true });
     jest.runOnlyPendingTimers();
@@ -320,7 +346,7 @@ describe('detect breakpoint changes', () => {
       matchMediaQueries.push(query);
       return {
         matches: [
-          mqFor('lg', bpData),
+          mqFor('lg', bpData), // initial match "lg"
         ].includes(query),
         media: query,
         onchange: null,
@@ -353,6 +379,8 @@ describe('detect breakpoint changes', () => {
     const mdxListener = mqlListeners.get(mqFor('mdx', bpData)) as Function;
     const mdyListener = mqlListeners.get(mqFor('mdy', bpData)) as Function;
     const lgListener = mqlListeners.get(mqFor('lg', bpData)) as Function;
+
+    // switch to "md" and "mdx"
     mdListener({ matches: true });
     mdxListener({ matches: true });
     lgListener({ matches: false });
@@ -375,6 +403,7 @@ describe('detect breakpoint changes', () => {
     expect(breakpointRangeObservable).toHaveBeenCalledTimes(1);
     expect(breakpointRangeObservable.mock.calls[0][0]).toBe(true);
 
+    // switch to "md" and "mdy"
     mdxListener({ matches: false });
     mdyListener({ matches: true });
     jest.runOnlyPendingTimers();
@@ -394,6 +423,7 @@ describe('detect breakpoint changes', () => {
 
     expect(breakpointRangeObservable).toHaveBeenCalledTimes(1);
 
+    // switch to "lg"
     mdListener({ matches: false });
     mdyListener({ matches: false });
     lgListener({ matches: true });
