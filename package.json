@@ -8,7 +8,7 @@
   "main": "dist/breakpoint-changes-rx.cjs.js",
   "module": "dist/breakpoint-changes-rx.esm.js",
   "browser": "dist/breakpoint-changes-rx.umd.js",
-  "types": "./dist/index.d.ts",
+  "types": "./dist/breakpoints.d.ts",
   "scripts": {
     "lint": "eslint --fix --ext .tsx,.ts,.jsx,.js ./ && tsc",
     "build": "rollup -c",

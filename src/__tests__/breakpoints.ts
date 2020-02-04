@@ -1,4 +1,4 @@
-import breakpoints, { parseBreakpoints, BreakpointDefinitions } from '../index';
+import breakpoints, { parseBreakpoints, BreakpointDefinitions } from '../breakpoints';
 
 /**
  * Helper function to generate breakpoint data
