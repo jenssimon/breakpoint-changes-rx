@@ -5,6 +5,12 @@
   "author": "Jens Simon <jens.simon80@googlemail.com>",
   "license": "MIT",
   "private": false,
+  "keywords": [
+    "breakpoints",
+    "breakpoints-change",
+    "rxjs",
+    "observable"
+  ],
   "main": "dist/breakpoint-changes-rx.cjs.js",
   "module": "dist/breakpoint-changes-rx.esm.js",
   "browser": "dist/breakpoint-changes-rx.umd.js",
