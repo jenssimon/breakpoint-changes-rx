@@ -114,11 +114,11 @@ const breakpoints = (breakpointDefinitions: BreakpointDefinitions): BreakpointFn
       actual.forEach(({ matches, name }) => {
         if (!matches) {
           const idx = curr.indexOf(name);
-          /* istanbul ignore next */
+          /* istanbul ignore else */
           if (idx !== -1) {
             curr.splice(idx, 1);
           }
-        } else /* istanbul ignore next */ if (!curr.includes(name)) {
+        } else /* istanbul ignore else */ if (!curr.includes(name)) {
           curr.push(name);
         }
       });
