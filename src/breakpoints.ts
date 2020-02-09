@@ -7,10 +7,8 @@ import {
 
 export interface BreakpointDefinition {
   [key: string]: string | number | undefined;
-  min?: string;
-  minInt?: number;
-  max?: string;
-  maxInt?: number;
+  min?: string|number;
+  max?: string|number;
 }
 export type BreakpointDefinitions = Record<string, BreakpointDefinition>
 
@@ -78,7 +76,6 @@ export const parseBreakpoints = (object: object, config?: BreakpointParseConfig)
         obj[name] = breakpoint;
       }
       breakpoint[minMax ? nameMin : nameMax] = value as string;
-      breakpoint[`${minMax ? nameMin : nameMax}Int`] = parseInt(value as string, 10);
     }
     return obj;
   }, {} as BreakpointDefinitions);
@@ -93,7 +90,7 @@ const breakpoints = (breakpointDefinitions: BreakpointDefinitions): BreakpointFn
         // matchMedia, build media query
         const mediaQueryList = matchMedia([['min', min], ['max', max]]
           .filter(([, val]) => val)
-          .map(([str, val]) => `(${str}-width: ${val})`)
+          .map(([str, val]) => `(${str}-width: ${typeof val !== 'string' ? `${String(val)}px` : val})`)
           .join(' and '));
 
         // set the current breakpoints

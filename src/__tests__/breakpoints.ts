@@ -8,27 +8,15 @@ import breakpoints, { parseBreakpoints, BreakpointDefinitions } from '../breakpo
  * @return breakpoint data
  */
 const testBreakpointData = (multipleMatches = false): BreakpointDefinitions => ({
-  sm: {
-    max: '767px', maxInt: 767,
-  },
-  md: {
-    min: '768px', minInt: 768, max: '991px', maxInt: 991,
-  },
-  lg: {
-    min: '992px', minInt: 992, max: '1199px', maxInt: 1199,
-  },
-  xl: {
-    min: '1200px', minInt: 1200,
-  },
+  sm: { max: '767px' },
+  md: { min: '768px', max: '991px' },
+  lg: { min: '992px', max: '1199px' },
+  xl: { min: '1200px' },
 
   // for multiple matches add additional breakpoints
   ...multipleMatches ? {
-    mdx: {
-      min: '768px', minInt: 768, max: '849px', maxInt: 849,
-    },
-    mdy: {
-      min: '850px', minInt: 850, max: '991px', maxInt: 991,
-    },
+    mdx: { min: '768px', max: '849px' },
+    mdy: { min: '850px', max: '991px' },
   } : {},
 });
 
@@ -71,7 +59,7 @@ describe('parseBreakpoints', () => {
       'breakpoint-sm-max': '767px',
       'bp-sm-max': '500px',
     }, { regex: /^bp-(\w*)-((max)|(min))$/ })).toStrictEqual({
-      sm: { max: '500px', maxInt: 500 },
+      sm: { max: '500px' },
     });
 
     expect(parseBreakpoints({
@@ -81,7 +69,7 @@ describe('parseBreakpoints', () => {
       regex: /^breakpoint-(ab-(\w*))-((max)|(min))$/,
       groupName: 2,
     })).toStrictEqual({
-      sm: { max: '500px', maxInt: 500 },
+      sm: { max: '500px' },
     });
 
     expect(parseBreakpoints({
@@ -91,7 +79,7 @@ describe('parseBreakpoints', () => {
       regex: /^breakpoint-(\w*)-(x)((max)|(min))$/,
       groupMinMax: 3,
     })).toStrictEqual({
-      xm: { max: '500px', maxInt: 500 },
+      xm: { max: '500px' },
     });
 
     expect(parseBreakpoints({
@@ -101,7 +89,7 @@ describe('parseBreakpoints', () => {
       regex: /^breakpoint-(\w*)-((maxi)|(mini))$/,
       isMin: (value) => value === 'mini',
     })).toStrictEqual({
-      xm: { min: '500px', minInt: 500 },
+      xm: { min: '500px' },
     });
   });
 });
@@ -236,6 +224,37 @@ describe('initialization and detect breakpoints on init', () => {
     expect(bp.includesBreakpoints(['mdx', 'lg'])).toBe(true);
     expect(bp.includesBreakpoints(['mdy', 'lg'])).toBe(false);
     expect(bp.includesBreakpoints(['lg', 'xl'])).toBe(false);
+  });
+
+  it('initializes with number values for a breakpoint', () => {
+    const bpData = {
+      md: { min: 768, max: 991 },
+    };
+    const matchMediaQueries: string[] = [];
+    const listenerMock = jest.fn();
+    const matchMediaImpl = jest.fn().mockImplementation((query) => {
+      matchMediaQueries.push(query);
+      return {
+        matches: query === '(min-width: 768px) and (max-width: 991px)',
+        media: query,
+        onchange: null,
+        addListener: listenerMock,
+      };
+    });
+    Object.defineProperty(window, 'matchMedia', {
+      writable: true,
+      value: matchMediaImpl,
+    });
+
+    const bp = breakpoints(bpData);
+    expect(matchMediaImpl).toHaveBeenCalledTimes(1); // 1 breakpoints -> 1 matchMedia calls
+
+    // are the correct media queries used?
+    expect(matchMediaQueries).toContain('(min-width: 768px) and (max-width: 991px)');
+
+    expect(listenerMock).toHaveBeenCalledTimes(1); // listeners for all media queries added?
+
+    expect(bp.getCurrentBreakpoints()).toStrictEqual(['md']);
   });
 });
 
