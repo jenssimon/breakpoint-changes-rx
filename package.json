@@ -1,8 +1,11 @@
 {
   "name": "breakpoint-changes-rx",
   "version": "1.0.0",
-  "repository": "git@github.com:jenssimon/breakpoint-changes-rx.git",
-  "author": "Jens Simon <jens.simon80@googlemail.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jenssimon/breakpoint-changes-rx"
+  },
+  "author": "Jens Simon <https://github.com/jenssimon>",
   "license": "MIT",
   "private": false,
   "keywords": [
@@ -53,5 +56,8 @@
   },
   "peerDependencies": {
     "rxjs": ">=6"
-  }
+  },
+  "files": [
+    "dist"
+  ]
 }
