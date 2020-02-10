@@ -173,7 +173,7 @@ const breakpoints = (breakpointDefinitions: BreakpointDefinitions): BreakpointFn
   );
 
   /**
-   * Create an observable emittinh values for entering or leaving a breakpoint range
+   * Create an observable emitting values for entering or leaving a breakpoint range
    *
    * @param range  an array containing a range of breakpoints
    *
