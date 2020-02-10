@@ -167,7 +167,7 @@ This function can use an optional configuration.
 
 Name          | Description                                                                            | Default
 --------------|----------------------------------------------------------------------------------------|--------------------------------------
-`regex`       | A regular expression describing the breakpoint naming to parse                         | `/^breakpoint-(\w*)-((max)|(min))$/`
+`regex`       | A regular expression describing the breakpoint naming to parse                         | `/^breakpoint-(\w*)-((max)\|(min))$/`
 `groupName`   | The index of the capture group that contains the name of the breakpoint                | `1`
 `groupMinMax` | The capture group index that contains the identifier for min or max of the breakpoint  | `2`
 `isMin`       | A function that returns `true` if the given min/max value represents min               | `(val) => val === nameMin`
