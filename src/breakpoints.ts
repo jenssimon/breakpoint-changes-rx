@@ -48,7 +48,6 @@ interface BreakpointFncs {
   breakpointsInRange: IBreakpointsInRange;
 }
 
-
 const nameMin = 'min';
 const nameMax = 'max';
 
@@ -59,12 +58,13 @@ const defaultParseConfig: BreakpointParseConfig = {
   isMin: (val) => val === nameMin,
 };
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 export const parseBreakpoints = (object: object, config?: BreakpointParseConfig): BreakpointDefinitions => {
   const parseConfig: BreakpointParseConfig = {
     ...defaultParseConfig,
-    ...config || {},
+    ...config ?? {},
   };
-  return Object.entries(object).reduce((obj, [key, value]) => {
+  return Object.entries(object).reduce<BreakpointDefinitions>((obj, [key, value]) => {
     const breakpointMatch = key.match(parseConfig.regex as RegExp);
     if (breakpointMatch && typeof value === 'string') {
       const name = breakpointMatch[parseConfig.groupName as number];
@@ -78,7 +78,7 @@ export const parseBreakpoints = (object: object, config?: BreakpointParseConfig)
       breakpoint[minMax ? nameMin : nameMax] = value as string;
     }
     return obj;
-  }, {} as BreakpointDefinitions);
+  }, {});
 };
 
 const breakpoints = (breakpointDefinitions: BreakpointDefinitions): BreakpointFncs => {

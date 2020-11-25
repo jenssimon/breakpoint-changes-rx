@@ -262,21 +262,17 @@ describe('detect breakpoint changes', () => {
   it('detects breakpoint change (single breakpoint scenario)', () => {
     const bpData = testBreakpointData();
     jest.useFakeTimers();
-    const matchMediaQueries: string[] = [];
-    const mqlListeners: Map<string, Function> = new Map();
-    const matchMediaImpl = jest.fn().mockImplementation((query) => {
-      matchMediaQueries.push(query);
-      return {
-        matches: [
-          mqFor('lg', bpData), // initial match "lg"
-        ].includes(query),
-        media: query,
-        onchange: null,
-        addListener: (fnc: Function): void => {
-          mqlListeners.set(query, fnc);
-        },
-      };
-    });
+    const mqlListeners: Map<string, Function> = new Map(); // eslint-disable-line @typescript-eslint/ban-types
+    const matchMediaImpl = jest.fn().mockImplementation((query) => ({
+      matches: [
+        mqFor('lg', bpData), // initial match "lg"
+      ].includes(query),
+      media: query,
+      onchange: null,
+      addListener: (fnc: Function): void => { // eslint-disable-line @typescript-eslint/ban-types
+        mqlListeners.set(query, fnc);
+      },
+    }));
     Object.defineProperty(window, 'matchMedia', {
       writable: true,
       value: matchMediaImpl,
@@ -297,8 +293,11 @@ describe('detect breakpoint changes', () => {
     const breakpointRangeObservable = jest.fn();
     bp.breakpointsInRange(['sm', 'md']).subscribe(breakpointRangeObservable);
 
+    // eslint-disable-next-line @typescript-eslint/ban-types
     const smListener = mqlListeners.get(mqFor('sm', bpData)) as Function;
+    // eslint-disable-next-line @typescript-eslint/ban-types
     const mdListener = mqlListeners.get(mqFor('md', bpData)) as Function;
+    // eslint-disable-next-line @typescript-eslint/ban-types
     const lgListener = mqlListeners.get(mqFor('lg', bpData)) as Function;
 
     // change to "md"
@@ -359,21 +358,18 @@ describe('detect breakpoint changes', () => {
   it('detects breakpoint change (multiple breakpoint scenario)', () => {
     const bpData = testBreakpointData(true);
     jest.useFakeTimers();
-    const matchMediaQueries: string[] = [];
-    const mqlListeners: Map<string, Function> = new Map();
-    const matchMediaImpl = jest.fn().mockImplementation((query) => {
-      matchMediaQueries.push(query);
-      return {
-        matches: [
-          mqFor('lg', bpData), // initial match "lg"
-        ].includes(query),
-        media: query,
-        onchange: null,
-        addListener: (fnc: Function): void => {
-          mqlListeners.set(query, fnc);
-        },
-      };
-    });
+    const mqlListeners: Map<string, Function> = new Map(); // eslint-disable-line @typescript-eslint/ban-types
+    // eslint-disable-next-line sonarjs/no-identical-functions
+    const matchMediaImpl = jest.fn().mockImplementation((query) => ({
+      matches: [
+        mqFor('lg', bpData), // initial match "lg"
+      ].includes(query),
+      media: query,
+      onchange: null,
+      addListener: (fnc: Function): void => { // eslint-disable-line @typescript-eslint/ban-types
+        mqlListeners.set(query, fnc);
+      },
+    }));
     Object.defineProperty(window, 'matchMedia', {
       writable: true,
       value: matchMediaImpl,
@@ -394,9 +390,13 @@ describe('detect breakpoint changes', () => {
     const breakpointRangeObservable = jest.fn();
     bp.breakpointsInRange(['sm', 'md']).subscribe(breakpointRangeObservable);
 
+    // eslint-disable-next-line @typescript-eslint/ban-types
     const mdListener = mqlListeners.get(mqFor('md', bpData)) as Function;
+    // eslint-disable-next-line @typescript-eslint/ban-types
     const mdxListener = mqlListeners.get(mqFor('mdx', bpData)) as Function;
+    // eslint-disable-next-line @typescript-eslint/ban-types
     const mdyListener = mqlListeners.get(mqFor('mdy', bpData)) as Function;
+    // eslint-disable-next-line @typescript-eslint/ban-types
     const lgListener = mqlListeners.get(mqFor('lg', bpData)) as Function;
 
     // switch to "md" and "mdx"
