@@ -58,8 +58,9 @@ const defaultParseConfig: BreakpointParseConfig = {
   isMin: (val) => val === nameMin,
 };
 
-// eslint-disable-next-line @typescript-eslint/ban-types
-export const parseBreakpoints = (object: object, config?: BreakpointParseConfig): BreakpointDefinitions => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const parseBreakpoints = (object: Record<string, any>,
+  config?: BreakpointParseConfig): BreakpointDefinitions => {
   const parseConfig: BreakpointParseConfig = {
     ...defaultParseConfig,
     ...config ?? {},
