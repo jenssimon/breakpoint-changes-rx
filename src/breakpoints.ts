@@ -99,7 +99,7 @@ const breakpoints = (breakpointDefinitions: BreakpointDefinitions): BreakpointFn
         }
 
         return new Observable((subscriber): void => {
-          mediaQueryList.addListener(({ matches }) => {
+          mediaQueryList.addEventListener('change', ({ matches }) => {
             subscriber.next({ name: name as string, matches });
           });
         });

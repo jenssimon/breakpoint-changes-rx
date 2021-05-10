@@ -107,7 +107,7 @@ describe('initialization and detect breakpoints on init', () => {
         matches: query === mqFor('lg', bpData), // "lg" matches
         media: query,
         onchange: null,
-        addListener: listenerMock,
+        addEventListener: listenerMock,
       };
     });
     Object.defineProperty(window, 'matchMedia', {
@@ -169,7 +169,7 @@ describe('initialization and detect breakpoints on init', () => {
         ].includes(query),
         media: query,
         onchange: null,
-        addListener: listenerMock,
+        addEventListener: listenerMock,
       };
     });
     Object.defineProperty(window, 'matchMedia', {
@@ -240,7 +240,7 @@ describe('initialization and detect breakpoints on init', () => {
         matches: query === '(min-width: 768px) and (max-width: 991px)',
         media: query,
         onchange: null,
-        addListener: listenerMock,
+        addEventListener: listenerMock,
       };
     });
     Object.defineProperty(window, 'matchMedia', {
@@ -271,7 +271,7 @@ describe('detect breakpoint changes', () => {
       ].includes(query),
       media: query,
       onchange: null,
-      addListener: (fnc: AnyFunction): void => {
+      addEventListener: (event: string, fnc: AnyFunction): void => {
         mqlListeners.set(query, fnc);
       },
     }));
@@ -367,7 +367,7 @@ describe('detect breakpoint changes', () => {
       media: query,
       onchange: null,
 
-      addListener: (fnc: AnyFunction): void => {
+      addEventListener: (event: string, fnc: AnyFunction): void => {
         mqlListeners.set(query, fnc);
       },
     }));

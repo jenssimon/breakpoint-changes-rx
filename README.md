@@ -7,6 +7,10 @@
 This package helps to detect current breakpoints and breakpoint changes. It initializes with a breakpoint configuration and provides Observables and useful functions.
 Multiple breakpoints at the same time are supported.
 
+> ⚠️️️️⚠️⚠️ WARNING: Version 2.x and beyond ⚠️⚠️⚠️
+> Version 2.0.0 removed the usage of the deprecated [MediaQueryList.addListener](https://developer.mozilla.org/en-US/docs/Web/API/MediaQueryList/addListener).
+> Instead it uses [MediaQueryList.onchange](https://developer.mozilla.org/en-US/docs/Web/API/MediaQueryList/onchange). See compatibility table before using it.
+> If needed I will continue provide changes to version 1.x which is using the deprecated function.
 
 ## Install
 
