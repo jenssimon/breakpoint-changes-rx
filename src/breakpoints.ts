@@ -1,14 +1,14 @@
 import {
-  Observable, merge, Subject, BehaviorSubject, ConnectableObservable, Observer,
+  Observable, merge, BehaviorSubject, Observer,
 } from 'rxjs';
 import {
-  scan, filter, map, multicast, bufferTime,
+  scan, filter, map, bufferTime, share,
 } from 'rxjs/operators';
 
 export interface BreakpointDefinition {
   [key: string]: string | number | undefined;
-  min?: string|number;
-  max?: string|number;
+  min?: string | number;
+  max?: string | number;
 }
 export type BreakpointDefinitions = Record<string, BreakpointDefinition>
 
@@ -31,21 +31,20 @@ export interface BreakpointParseConfig {
   isMin?: BreakpointMinMaxDetector;
 }
 
-type IBreakpointChanges$ = ConnectableObservable<BreakpointState>;
-type IGetCurrentBreakpoints = () => string[];
-type IIncludesBreakpoints = (bps: string[]) => boolean;
-type IIncludesBreakpoint = (bp: string) => boolean;
-type IBreakpointsChange = (bp: string) => Observable<boolean>
-type IBreakpointsInRange = (range: string[]) => Observable<boolean>;
+type GetCurrentBreakpointsFnc = () => string[];
+type IncludesBreakpointsFnc = (bps: string[]) => boolean;
+type IncludesBreakpointFnc = (bp: string) => boolean;
+type BreakpointsChangeFnc = (bp: string) => Observable<boolean>
+type BreakpointsInRangeFnc = (range: string[]) => Observable<boolean>;
 
 interface BreakpointFncs {
-  breakpointsChanges$: IBreakpointChanges$;
+  breakpointsChanges$: Observable<BreakpointState>;
   breakpointsChangesBehavior$: BehaviorSubject<BreakpointState>;
-  getCurrentBreakpoints: IGetCurrentBreakpoints;
-  includesBreakpoints: IIncludesBreakpoints;
-  includesBreakpoint: IIncludesBreakpoint;
-  breakpointsChange: IBreakpointsChange;
-  breakpointsInRange: IBreakpointsInRange;
+  getCurrentBreakpoints: GetCurrentBreakpointsFnc;
+  includesBreakpoints: IncludesBreakpointsFnc;
+  includesBreakpoint: IncludesBreakpointFnc;
+  breakpointsChange: BreakpointsChangeFnc;
+  breakpointsInRange: BreakpointsInRangeFnc;
 }
 
 const nameMin = 'min';
@@ -84,7 +83,7 @@ export const parseBreakpoints = (object: Record<string, any>,
 
 const breakpoints = (breakpointDefinitions: BreakpointDefinitions): BreakpointFncs => {
   const initialBreakpoints: string[] = [];
-  const breakpointsChangesSource$: Observable<BreakpointState> = merge(
+  const breakpointsChanges$: Observable<BreakpointState> = merge(
     ...Object.entries(breakpointDefinitions)
       .map(([name, breakpoint]): Observable<BreakpointMatch> => {
         const { min, max } = breakpoint;
@@ -125,12 +124,9 @@ const breakpoints = (breakpointDefinitions: BreakpointDefinitions): BreakpointFn
       });
       return { curr, prev };
     }, { curr: initialBreakpoints, prev: [] as string[] }), // initial value
-  );
 
-  // multicast Observable
-  const breakpointsChanges$ = breakpointsChangesSource$
-    .pipe(multicast((): Subject<BreakpointState> => new Subject())) as IBreakpointChanges$;
-  breakpointsChanges$.connect();
+    share(), // multicast
+  );
 
   const breakpointsChangesBehavior$ = new BehaviorSubject({ curr: initialBreakpoints, prev: [] as string[] });
   breakpointsChanges$.subscribe(breakpointsChangesBehavior$ as Observer<BreakpointState>);
@@ -141,7 +137,7 @@ const breakpoints = (breakpointDefinitions: BreakpointDefinitions): BreakpointFn
    * @returns the current breakpoint names
    */
   // TODO: check array.includes(getCurrentBreakpoints()[0]))
-  const getCurrentBreakpoints: IGetCurrentBreakpoints = () => {
+  const getCurrentBreakpoints: GetCurrentBreakpointsFnc = () => {
     let bps: string[] = [];
     breakpointsChangesBehavior$.subscribe({
       next: ({ curr }) => {
@@ -155,10 +151,10 @@ const breakpoints = (breakpointDefinitions: BreakpointDefinitions): BreakpointFn
   const breakpointListContainsBreakpoints = (bpl: string[], bps: string[]): boolean => bps.some((bp) => bpl
     .includes(bp));
 
-  const includesBreakpoints: IIncludesBreakpoints = (bps) => breakpointListContainsBreakpoints(
+  const includesBreakpoints: IncludesBreakpointsFnc = (bps) => breakpointListContainsBreakpoints(
     getCurrentBreakpoints(), bps,
   );
-  const includesBreakpoint: IIncludesBreakpoint = (bp) => includesBreakpoints([bp]);
+  const includesBreakpoint: IncludesBreakpointFnc = (bp) => includesBreakpoints([bp]);
 
   /**
    * Create an observable emitting values for entering or leaving a breakpoint.
@@ -167,7 +163,7 @@ const breakpoints = (breakpointDefinitions: BreakpointDefinitions): BreakpointFn
    *
    * @returns an Observerable containing entering/leaving the breakpoint
    */
-  const breakpointsChange: IBreakpointsChange = (bp) => breakpointsChanges$.pipe(
+  const breakpointsChange: BreakpointsChangeFnc = (bp) => breakpointsChanges$.pipe(
     filter(({ curr, prev }) => [curr, prev].some((b) => breakpointListContainsBreakpoint(b, bp))),
     filter(({ curr, prev }) => curr.includes(bp) !== prev.includes(bp)),
     map(({ curr }) => curr.includes(bp)),
@@ -180,7 +176,7 @@ const breakpoints = (breakpointDefinitions: BreakpointDefinitions): BreakpointFn
    *
    * @returns an Oberservable containing entering/leaving the breakpoint range
    */
-  const breakpointsInRange: IBreakpointsInRange = (range) => {
+  const breakpointsInRange: BreakpointsInRangeFnc = (range) => {
     const isInRange = (bpl: string[]): boolean => breakpointListContainsBreakpoints(bpl, range);
     return breakpointsChanges$.pipe(
       map(({ curr, prev }) => ({ curr: isInRange(curr), prev: isInRange(prev) })),
