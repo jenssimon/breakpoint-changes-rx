@@ -30,7 +30,7 @@ This function initializes the breakpoint detection and returns an object contain
 - [`includesBreakpoints(bps)`](#includesBreakpoints(bps))
 - [`includesBreakpoint(bp)`](#includesBreakpoint(bp))
 
-> ℹ️ [`window.matchMedia()`](https://developer.mozilla.org/en-US/docs/Web/API/Window/matchMedia) and [`MediaQueryList.addListener()`](https://developer.mozilla.org/en-US/docs/Web/API/MediaQueryList/addListener) are used so only browsers supporting this features can be used.
+> ℹ️ [`window.matchMedia()`](https://developer.mozilla.org/en-US/docs/Web/API/Window/matchMedia) and [MediaQueryList.onchange](https://developer.mozilla.org/en-US/docs/Web/API/MediaQueryList/onchange) are used so only browsers supporting this features can be used.
 
 For details about the breakpointDefinitions see [Configuration](#Configuration) section
 
