@@ -1,4 +1,4 @@
-[![NPM version][npm-image]][npm-url] [![Downloads][npm-downloads-image]][npm-url] [![Dependencies][deps-image]][deps-url] [![star this repo][gh-stars-image]][gh-url] [![fork this repo][gh-forks-image]][gh-url] [![Build Status][travis-image]][travis-url] [![Coverage Status][coveralls-image]][coveralls-url] ![Code Style][codestyle-image]
+[![NPM version][npm-image]][npm-url] [![Downloads][npm-downloads-image]][npm-url] [![star this repo][gh-stars-image]][gh-url] [![fork this repo][gh-forks-image]][gh-url] [![Build Status][travis-image]][travis-url] [![Coverage Status][coveralls-image]][coveralls-url] ![Code Style][codestyle-image]
 
 # breakpoint-changes-rx
 
@@ -178,14 +178,11 @@ Name          | Description                                                     
 
 ## License
 
-MIT © 2020 [Jens Simon](https://github.com/jenssimon)
+MIT © 2021 [Jens Simon](https://github.com/jenssimon)
 
 [npm-url]: https://www.npmjs.com/package/breakpoint-changes-rx
 [npm-image]: https://badgen.net/npm/v/breakpoint-changes-rx
 [npm-downloads-image]: https://badgen.net/npm/dw/breakpoint-changes-rx
-
-[deps-url]: https://david-dm.org/jenssimon/breakpoint-changes-rx
-[deps-image]: https://badgen.net/david/dep/jenssimon/breakpoint-changes-rx
 
 [gh-url]: https://github.com/jenssimon/breakpoint-changes-rx
 [gh-stars-image]: https://badgen.net/github/stars/jenssimon/breakpoint-changes-rx
