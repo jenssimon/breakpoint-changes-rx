@@ -57,9 +57,10 @@ const defaultParseConfig: BreakpointParseConfig = {
   isMin: (val) => val === nameMin,
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const parseBreakpoints = (object: Record<string, any>,
-  config?: BreakpointParseConfig): BreakpointDefinitions => {
+export const parseBreakpoints = (
+  object: Record<string, unknown>,
+  config?: BreakpointParseConfig,
+): BreakpointDefinitions => {
   const parseConfig: BreakpointParseConfig = {
     ...defaultParseConfig,
     ...config ?? {},
@@ -90,6 +91,7 @@ const breakpoints = (breakpointDefinitions: BreakpointDefinitions): BreakpointFn
         // matchMedia, build media query
         const mediaQueryList = matchMedia([['min', min], ['max', max]]
           .filter(([, val]) => val)
+          // eslint-disable-next-line sonarjs/no-nested-template-literals
           .map(([str, val]) => `(${str}-width: ${typeof val !== 'string' ? `${String(val)}px` : val})`)
           .join(' and '));
 
@@ -152,7 +154,8 @@ const breakpoints = (breakpointDefinitions: BreakpointDefinitions): BreakpointFn
     .includes(bp));
 
   const includesBreakpoints: IncludesBreakpointsFnc = (bps) => breakpointListContainsBreakpoints(
-    getCurrentBreakpoints(), bps,
+    getCurrentBreakpoints(),
+    bps,
   );
   const includesBreakpoint: IncludesBreakpointFnc = (bp) => includesBreakpoints([bp]);
 

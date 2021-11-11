@@ -26,18 +26,18 @@
     "coveralls": "cat ./coverage/lcov.info | coveralls"
   },
   "devDependencies": {
-    "@jenssimon/eslint-config-base": "^4.0.0",
-    "@jenssimon/eslint-config-typescript": "^3.0.0",
-    "@types/jest": "^26.0.23",
-    "coveralls": "^3.1.0",
-    "eslint": "^7.28.0",
-    "jest": "^27.0.4",
+    "@jenssimon/eslint-config-base": "^5.0.0",
+    "@jenssimon/eslint-config-typescript": "^3.1.1",
+    "@types/jest": "^27.0.2",
+    "coveralls": "^3.1.1",
+    "eslint": "^8.2.0",
+    "jest": "^27.3.1",
     "rollup": "^1.31.0",
     "rollup-plugin-typescript2": "^0.30.0",
-    "rxjs": "^7.1.0",
-    "ts-jest": "^27.0.3",
-    "tslib": "^2.3.0",
-    "typescript": "^4.3.3"
+    "rxjs": "^7.4.0",
+    "ts-jest": "^27.0.7",
+    "tslib": "^2.3.1",
+    "typescript": "^4.4.4"
   },
   "peerDependencies": {
     "rxjs": ">=6"
