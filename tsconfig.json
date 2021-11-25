@@ -1,16 +1,16 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "es2017",
     "module": "esnext",
     "moduleResolution": "node",
     "declaration": true,
-    "noEmit": true,
     "strict": true,
     "esModuleInterop": true,
     "lib": [
       "ESNext",
       "DOM"
-    ]
+    ],
+    "outDir": "./dist/",
   },
   "include": [
     "src/**/*"

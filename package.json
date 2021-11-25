@@ -11,38 +11,64 @@
   "keywords": [
     "breakpoints",
     "breakpoints-change",
+    "viewport",
+    "responsive",
     "rxjs",
     "observable"
   ],
-  "main": "dist/breakpoint-changes-rx.cjs.js",
-  "module": "dist/breakpoint-changes-rx.esm.js",
-  "browser": "dist/breakpoint-changes-rx.umd.js",
-  "types": "./dist/breakpoints.d.ts",
+  "type": "module",
+  "main": "dist/breakpoints.js",
+  "types": "dist/breakpoints.d.ts",
+  "files": [
+    "dist/breakpoints.js",
+    "dist/breakpoints.d.ts",
+    "LICENSE",
+    "README.md"
+  ],
   "scripts": {
-    "lint": "eslint --fix --ext .tsx,.ts,.jsx,.js ./ && tsc",
-    "build": "rollup -c",
-    "prepublishOnly": "yarn build",
+    "lint": "eslint --fix --ext .tsx,.ts,.jsx,.js ./ && tsc --noEmit",
+    "build": "tsc",
+    "prepublishOnly": "tsc",
     "test": "jest --coverage",
     "coveralls": "cat ./coverage/lcov.info | coveralls"
   },
   "devDependencies": {
     "@jenssimon/eslint-config-base": "^5.0.0",
-    "@jenssimon/eslint-config-typescript": "^3.1.2",
-    "@types/jest": "^27.0.2",
+    "@jenssimon/eslint-config-typescript": "^3.1.3",
+    "@types/jest": "^27.0.3",
     "coveralls": "^3.1.1",
-    "eslint": "^8.2.0",
+    "eslint": "^8.3.0",
     "jest": "^27.3.1",
-    "rollup": "^1.31.0",
-    "rollup-plugin-typescript2": "^0.30.0",
     "rxjs": "^7.4.0",
     "ts-jest": "^27.0.7",
-    "tslib": "^2.3.1",
-    "typescript": "^4.4.4"
+    "typescript": "^4.5.2"
   },
   "peerDependencies": {
     "rxjs": ">=6"
   },
-  "files": [
-    "dist"
-  ]
+  "eslintConfig": {
+    "parserOptions": {
+      "project": "./tsconfig.json"
+    },
+    "extends": [
+      "@jenssimon/base",
+      "@jenssimon/typescript"
+    ]
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "modulePathIgnorePatterns": [
+      "dist/"
+    ],
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ]
+  }
 }

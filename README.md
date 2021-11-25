@@ -7,7 +7,12 @@
 This package helps to detect current breakpoints and breakpoint changes. It initializes with a breakpoint configuration and provides Observables and useful functions.
 Multiple breakpoints at the same time are supported.
 
+> ⚠️️️️⚠️⚠️ WARNING: Version 3.x drops support for CommonJS and AMD. Target is ES2017 ⚠️⚠️⚠️
+>
+> Version 3.0.0 only ships as ES module. Also the target version of this package is ES2017. If you need to support older browsers you need to transpile to a prior ES version.
+
 > ⚠️️️️⚠️⚠️ WARNING: Version 2.x and beyond ⚠️⚠️⚠️
+>
 > Version 2.0.0 removed the usage of the deprecated [MediaQueryList.addListener](https://developer.mozilla.org/en-US/docs/Web/API/MediaQueryList/addListener).
 > Instead it uses [MediaQueryList.onchange](https://developer.mozilla.org/en-US/docs/Web/API/MediaQueryList/onchange). See compatibility table before using it.
 > If needed I will continue provide changes to version 1.x which is using the deprecated function.
@@ -22,13 +27,20 @@ $ yarn add breakpoint-changes-rx
 
 This function initializes the breakpoint detection and returns an object containing following properties:
 
-- [`breakpointsChanges$`](#breakpointsCHanges$)
-- [`breakpointsChangesBehavior$`](#breakpointsChangesBehavior$)
-- [`breakpointsChange(bp)`](#breakpointsChange(bp))
-- [`breakpointsInRange(range)`](#breakpointsInRange(range))
-- [`getCurrentBreakpoints()`](#getCurrentBreakpoints())
-- [`includesBreakpoints(bps)`](#includesBreakpoints(bps))
-- [`includesBreakpoint(bp)`](#includesBreakpoint(bp))
+- [breakpoint-changes-rx](#breakpoint-changes-rx)
+  - [Install](#install)
+  - [`breakpoints(breakpointDefinitions)`](#breakpointsbreakpointdefinitions)
+    - [`breakpointsChanges$`](#breakpointschanges)
+    - [`breakpointsChangesBehavior$`](#breakpointschangesbehavior)
+    - [`getCurrentBreakpoints()`](#getcurrentbreakpoints)
+    - [`breakpointsChange(bp)`](#breakpointschangebp)
+    - [`breakpointsInRange(range)`](#breakpointsinrangerange)
+    - [`includesBreakpoints(bps)`](#includesbreakpointsbps)
+    - [`includesBreakpoint(bp)`](#includesbreakpointbp)
+  - [Configuration](#configuration)
+    - [Format](#format)
+    - [`parseBreakpoints(object, config)`](#parsebreakpointsobject-config)
+  - [License](#license)
 
 > ℹ️ [`window.matchMedia()`](https://developer.mozilla.org/en-US/docs/Web/API/Window/matchMedia) and [MediaQueryList.onchange](https://developer.mozilla.org/en-US/docs/Web/API/MediaQueryList/onchange) are used so only browsers supporting this features can be used.
 
