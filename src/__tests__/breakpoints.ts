@@ -2,7 +2,8 @@
  * @jest-environment jsdom
  */
 
-import breakpoints, { parseBreakpoints, BreakpointDefinitions } from '../breakpoints';
+import type { BreakpointDefinitions } from '../breakpoints';
+import breakpoints, { parseBreakpoints } from '../breakpoints';
 
 type AnyFunction = (args?: unknown) => unknown
 

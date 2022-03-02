@@ -28,7 +28,11 @@
     "lint": "eslint --fix --ext .tsx,.ts,.jsx,.js ./ && tsc --noEmit",
     "build": "tsc",
     "prepublishOnly": "tsc",
-    "test": "jest --coverage"
+    "test": "jest --coverage",
+    "ci": "run-s \"ci:*\"",
+    "ci:lint": "eslint --ext .tsx,.ts,.jsx,.js ./",
+    "ci:tsc": "tsc --noEmit",
+    "ci:test": "jest --coverage"
   },
   "devDependencies": {
     "@jenssimon/eslint-config-base": "5.3.1",
@@ -36,6 +40,7 @@
     "@types/jest": "27.4.1",
     "eslint": "8.10.0",
     "jest": "27.5.1",
+    "npm-run-all": "4.1.5",
     "rxjs": "7.5.4",
     "ts-jest": "27.1.3",
     "typescript": "4.6.2"

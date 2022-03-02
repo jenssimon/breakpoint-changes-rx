@@ -1,5 +1,6 @@
+import type { Observer } from 'rxjs';
 import {
-  Observable, merge, BehaviorSubject, Observer,
+  Observable, merge, BehaviorSubject,
 } from 'rxjs';
 import {
   scan, filter, map, bufferTime, share,
