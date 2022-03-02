@@ -7,7 +7,6 @@
   },
   "author": "Jens Simon <https://github.com/jenssimon>",
   "license": "MIT",
-  "private": false,
   "keywords": [
     "breakpoints",
     "breakpoints-change",
@@ -68,5 +67,6 @@
       "json",
       "node"
     ]
-  }
+  },
+  "packageManager": "yarn@3.2.0"
 }
