@@ -29,14 +29,12 @@
     "lint": "eslint --fix --ext .tsx,.ts,.jsx,.js ./ && tsc --noEmit",
     "build": "tsc",
     "prepublishOnly": "tsc",
-    "test": "jest --coverage",
-    "coveralls": "cat ./coverage/lcov.info | coveralls"
+    "test": "jest --coverage"
   },
   "devDependencies": {
     "@jenssimon/eslint-config-base": "5.3.1",
     "@jenssimon/eslint-config-typescript": "3.3.4",
     "@types/jest": "27.4.1",
-    "coveralls": "3.1.1",
     "eslint": "8.10.0",
     "jest": "27.5.1",
     "rxjs": "7.5.4",
