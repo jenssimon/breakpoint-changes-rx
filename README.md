@@ -20,7 +20,7 @@ Multiple breakpoints at the same time are supported.
 ## Install
 
 ```sh
-$ yarn add breakpoint-changes-rx
+yarn add breakpoint-changes-rx
 ```
 
 ## `breakpoints(breakpointDefinitions)`
@@ -127,7 +127,6 @@ Returns `true` if the given breakpoint is part of the current active breakpoints
 ```javascript
 console.log('breakpoint "md" is active %o', bp.includesBreakpoint('md'));
 ```
-
 
 ## Configuration
 
