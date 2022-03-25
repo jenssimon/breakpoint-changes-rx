@@ -48,6 +48,7 @@ const mqFor = (breakpoint: string, bps: BreakpointDefinitions): string => (Objec
 describe('parseBreakpoints', () => {
   it('parses breakpoint information from a possible return value of a CSS module', () => {
     expect(parseBreakpoints({
+      /* eslint-disable @typescript-eslint/naming-convention */
       'foo-sm-min': '100px',
       'breakpoint-xl-min': '1200px',
       foo: 'bar',
@@ -58,20 +59,25 @@ describe('parseBreakpoints', () => {
       'breakpoint-md-min': '768px',
       'breakpoint-lg-max': '1199px',
       baz: 123,
+      /* eslint-enable @typescript-eslint/naming-convention */
     })).toStrictEqual(testBreakpointData());
   });
 
   it('can use a custom config', () => {
     expect(parseBreakpoints({
+      /* eslint-disable @typescript-eslint/naming-convention */
       'breakpoint-sm-max': '767px',
       'bp-sm-max': '500px',
+      /* eslint-enable @typescript-eslint/naming-convention */
     }, { regex: /^bp-(\w*)-((max)|(min))$/ })).toStrictEqual({
       sm: { max: '500px' },
     });
 
     expect(parseBreakpoints({
+      /* eslint-disable @typescript-eslint/naming-convention */
       'breakpoint-sm-max': '767px',
       'breakpoint-ab-sm-max': '500px',
+      /* eslint-enable @typescript-eslint/naming-convention */
     }, {
       regex: /^breakpoint-(ab-(\w*))-((max)|(min))$/,
       groupName: 2,
@@ -80,8 +86,10 @@ describe('parseBreakpoints', () => {
     });
 
     expect(parseBreakpoints({
+      /* eslint-disable @typescript-eslint/naming-convention */
       'breakpoint-sm-max': '767px',
       'breakpoint-xm-xmax': '500px',
+      /* eslint-enable @typescript-eslint/naming-convention */
     }, {
       regex: /^breakpoint-(\w*)-(x)((max)|(min))$/,
       groupMinMax: 3,
@@ -90,8 +98,10 @@ describe('parseBreakpoints', () => {
     });
 
     expect(parseBreakpoints({
+      /* eslint-disable @typescript-eslint/naming-convention */
       'breakpoint-sm-min': '767px',
       'breakpoint-xm-mini': '500px',
+      /* eslint-enable @typescript-eslint/naming-convention */
     }, {
       regex: /^breakpoint-(\w*)-((maxi)|(mini))$/,
       isMin: (value) => value === 'mini',
