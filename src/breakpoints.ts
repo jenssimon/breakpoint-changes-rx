@@ -1,10 +1,11 @@
-import type { Observer } from 'rxjs';
 import {
   Observable, merge, BehaviorSubject,
 } from 'rxjs';
 import {
   scan, filter, map, bufferTime, share,
 } from 'rxjs/operators';
+
+import type { Observer } from 'rxjs';
 
 export interface BreakpointDefinition {
   [key: string]: string | number | undefined;
