@@ -29,10 +29,10 @@
     "build": "tsc",
     "prepublishOnly": "tsc",
     "test": "jest --coverage",
-    "ci": "run-s \"ci:*\"",
-    "ci:lint": "eslint --ext .tsx,.ts,.jsx,.js ./",
-    "ci:tsc": "tsc --noEmit",
-    "ci:test": "jest --coverage"
+    "ci-test": "run-s \"ci-test:*\"",
+    "ci-test:lint": "eslint --ext .tsx,.ts,.jsx,.js ./",
+    "ci-test:tsc": "tsc --noEmit",
+    "ci-test:test": "jest --coverage"
   },
   "devDependencies": {
     "@jenssimon/eslint-config-base": "5.4.1",
