@@ -35,7 +35,7 @@
     "ci:test": "jest --coverage"
   },
   "devDependencies": {
-    "@jenssimon/eslint-config-base": "5.4.0",
+    "@jenssimon/eslint-config-base": "5.4.1",
     "@jenssimon/eslint-config-typescript": "3.4.1",
     "@types/jest": "27.5.1",
     "eslint": "8.15.0",
