@@ -2767,7 +2767,7 @@ __metadata:
     jest-environment-jsdom: 28.1.2
     npm-run-all: 4.1.5
     pinst: 3.0.0
-    rxjs: 7.5.5
+    rxjs: 7.5.6
     semantic-release: 19.0.3
     ts-jest: 28.0.5
     typescript: 4.7.4
@@ -8414,12 +8414,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rxjs@npm:7.5.5":
-  version: 7.5.5
-  resolution: "rxjs@npm:7.5.5"
+"rxjs@npm:7.5.6":
+  version: 7.5.6
+  resolution: "rxjs@npm:7.5.6"
   dependencies:
     tslib: ^2.1.0
-  checksum: e034f60805210cce756dd2f49664a8108780b117cf5d0e2281506e9e6387f7b4f1532d974a8c8b09314fa7a16dd2f6cff3462072a5789672b5dcb45c4173f3c6
+  checksum: fc05f01364a74dac57490fb3e07ea63b422af04017fae1db641a009073f902ef69f285c5daac31359620dc8d9aee7d81e42b370ca2a8573d1feae0b04329383b
   languageName: node
   linkType: hard
 
