@@ -41,7 +41,6 @@ const mqFor = (breakpoint: string, bps: BreakpointDefinitions): string => (Objec
     .filter(([, val]) => val)
     .map(([str, val]) => `(${str}-width: ${val})`)
     .join(' and '))
-// eslint-disable-next-line unicorn/no-array-reduce
 ).reduce((prev, curr) => curr);
 
 /*

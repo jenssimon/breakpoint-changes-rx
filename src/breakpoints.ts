@@ -67,7 +67,6 @@ export const parseBreakpoints = (
     ...defaultParseConfig,
     ...config,
   };
-  // eslint-disable-next-line unicorn/no-array-reduce
   return Object.entries(object).reduce<BreakpointDefinitions>((obj, [key, value]) => {
     const breakpointMatch = key.match(parseConfig.regex as RegExp);
     if (breakpointMatch && typeof value === 'string') {
