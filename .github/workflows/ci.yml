@@ -34,8 +34,8 @@ jobs:
         yarn ci-test
 
     - uses: codecov/codecov-action@v3
-      with:
-        fail_ci_if_error: true
+      # with:
+      #   fail_ci_if_error: true
 
   release:
     needs: [build]
