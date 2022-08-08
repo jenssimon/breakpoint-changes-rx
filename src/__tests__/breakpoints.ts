@@ -375,7 +375,6 @@ describe('detect breakpoint changes', () => {
     jest.useFakeTimers();
     const mqlListeners: Map<string, AnyFunction> = new Map();
 
-    // eslint-disable-next-line sonarjs/no-identical-functions
     const matchMediaImpl = jest.fn().mockImplementation((query) => ({
       matches: [
         mqFor('lg', bpData), // initial match "lg"
