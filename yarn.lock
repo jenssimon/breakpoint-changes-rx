@@ -758,17 +758,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jenssimon/eslint-config-typescript@npm:3.6.3":
-  version: 3.6.3
-  resolution: "@jenssimon/eslint-config-typescript@npm:3.6.3"
+"@jenssimon/eslint-config-typescript@npm:3.6.4":
+  version: 3.6.4
+  resolution: "@jenssimon/eslint-config-typescript@npm:3.6.4"
   dependencies:
-    "@typescript-eslint/eslint-plugin": ^5.38.0
-    "@typescript-eslint/parser": ^5.38.0
+    "@typescript-eslint/eslint-plugin": ^5.38.1
+    "@typescript-eslint/parser": ^5.38.1
     eslint-plugin-deprecation: ^1.3.2
   peerDependencies:
     eslint: ^7.0.0 || ^8.0.0
     typescript: ">=4.0.0"
-  checksum: ec9e8784fc92fce98ebd4ae8edfe881373f6521e91b42464a517a93896688b13c2756892cf129433419f1b180138d5841fe78f4d5e2505a5e1625e4c60823411
+  checksum: b04269dc9654bb2f3f50f1fc3c045e28df2312e76f0f51a065053ef3db29a9e90049103ba857742337e8c35f54a6ec1003d1d0f8c3fd1cf3bbfec481e1f5a482
   languageName: node
   linkType: hard
 
@@ -1781,7 +1781,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/eslint-plugin@npm:^5.38.0":
+"@typescript-eslint/eslint-plugin@npm:^5.38.1":
   version: 5.38.1
   resolution: "@typescript-eslint/eslint-plugin@npm:5.38.1"
   dependencies:
@@ -1814,7 +1814,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/parser@npm:^5.38.0":
+"@typescript-eslint/parser@npm:^5.38.1":
   version: 5.38.1
   resolution: "@typescript-eslint/parser@npm:5.38.1"
   dependencies:
@@ -2463,7 +2463,7 @@ __metadata:
     "@commitlint/cli": 17.1.2
     "@commitlint/config-conventional": 17.1.0
     "@jenssimon/eslint-config-base": 6.3.3
-    "@jenssimon/eslint-config-typescript": 3.6.3
+    "@jenssimon/eslint-config-typescript": 3.6.4
     "@types/jest": 29.0.3
     commitizen: 4.2.5
     cz-conventional-changelog: 3.3.0
@@ -2478,7 +2478,7 @@ __metadata:
     semantic-release: 19.0.5
     ts-jest: 29.0.2
     ts-node: 10.9.1
-    typescript: 4.8.3
+    typescript: 4.8.4
   peerDependencies:
     rxjs: ">=6"
   languageName: unknown
@@ -9352,7 +9352,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:4.8.3, typescript@npm:^4.6.4":
+"typescript@npm:4.8.4":
+  version: 4.8.4
+  resolution: "typescript@npm:4.8.4"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: 3e4f061658e0c8f36c820802fa809e0fd812b85687a9a2f5430bc3d0368e37d1c9605c3ce9b39df9a05af2ece67b1d844f9f6ea8ff42819f13bcb80f85629af0
+  languageName: node
+  linkType: hard
+
+"typescript@npm:^4.6.4":
   version: 4.8.3
   resolution: "typescript@npm:4.8.3"
   bin:
@@ -9362,7 +9372,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@4.8.3#~builtin<compat/typescript>, typescript@patch:typescript@^4.6.4#~builtin<compat/typescript>":
+"typescript@patch:typescript@4.8.4#~builtin<compat/typescript>":
+  version: 4.8.4
+  resolution: "typescript@patch:typescript@npm%3A4.8.4#~builtin<compat/typescript>::version=4.8.4&hash=a1c5e5"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: 563a0ef47abae6df27a9a3ab38f75fc681f633ccf1a3502b1108e252e187787893de689220f4544aaf95a371a4eb3141e4a337deb9895de5ac3c1ca76430e5f0
+  languageName: node
+  linkType: hard
+
+"typescript@patch:typescript@^4.6.4#~builtin<compat/typescript>":
   version: 4.8.3
   resolution: "typescript@patch:typescript@npm%3A4.8.3#~builtin<compat/typescript>::version=4.8.3&hash=a1c5e5"
   bin:
