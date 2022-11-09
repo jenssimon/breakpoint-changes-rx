@@ -200,5 +200,5 @@ MIT © 2022 [Jens Simon](https://github.com/jenssimon)
 [gh-forks-image]: https://badgen.net/github/forks/jenssimon/breakpoint-changes-rx
 [gh-status-image]: https://badgen.net/github/status/jenssimon/breakpoint-changes-rx
 
-[coveralls-url]: https://coveralls.io/github/jenssimon/breakpoint-changes-rx?branch=master
-[coveralls-image]: https://coveralls.io/repos/github/jenssimon/breakpoint-changes-rx/badge.svg?branch=master
+[coveralls-url]: https://coveralls.io/github/jenssimon/breakpoint-changes-rx?branch=main
+[coveralls-image]: https://coveralls.io/repos/github/jenssimon/breakpoint-changes-rx/badge.svg?branch=main
