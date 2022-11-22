@@ -94,7 +94,7 @@ const breakpoints = (breakpointDefinitions: BreakpointDefinitions): BreakpointFn
         const mediaQueryList = matchMedia([['min', min], ['max', max]]
           .filter(([, val]) => val)
           // eslint-disable-next-line sonarjs/no-nested-template-literals
-          .map(([str, val]) => `(${str}-width: ${typeof val !== 'string' ? `${String(val)}px` : val})`)
+          .map(([str, val]) => `(${str}-width: ${typeof val === 'string' ? val : `${String(val)}px`})`)
           .join(' and '));
 
         // set the current breakpoints
