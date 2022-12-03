@@ -2588,7 +2588,7 @@ __metadata:
     lint-staged: 13.0.4
     npm-run-all: 4.1.5
     pinst: 3.0.0
-    rxjs: 7.5.7
+    rxjs: 7.6.0
     semantic-release: 19.0.5
     ts-jest: 29.0.3
     ts-node: 10.9.1
@@ -8593,7 +8593,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rxjs@npm:7.5.7, rxjs@npm:^7.5.5, rxjs@npm:^7.5.6":
+"rxjs@npm:7.6.0":
+  version: 7.6.0
+  resolution: "rxjs@npm:7.6.0"
+  dependencies:
+    tslib: ^2.1.0
+  checksum: b3abbbfe1ddfd06fca9314b83cbd13bcddc3320429218136f75c79a4802ac430dd13873364aac1ded54fd457f8c77df332d205a92d8a1c61656565bb718c50af
+  languageName: node
+  linkType: hard
+
+"rxjs@npm:^7.5.5, rxjs@npm:^7.5.6":
   version: 7.5.7
   resolution: "rxjs@npm:7.5.7"
   dependencies:
