@@ -189,7 +189,7 @@ Name          | Description                                                     
 
 ## License
 
-MIT © 2022 [Jens Simon](https://github.com/jenssimon)
+MIT © 2023 [Jens Simon](https://github.com/jenssimon)
 
 [npm-url]: https://www.npmjs.com/package/breakpoint-changes-rx
 [npm-image]: https://badgen.net/npm/v/breakpoint-changes-rx
