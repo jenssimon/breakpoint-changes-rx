@@ -135,11 +135,6 @@ const breakpoints = (breakpointDefinitions: BreakpointDefinitions): BreakpointFn
   const breakpointsChangesBehavior$ = new BehaviorSubject({ curr: initialBreakpoints, prev: [] as string[] });
   breakpointsChanges$.subscribe(breakpointsChangesBehavior$ as Observer<BreakpointState>);
 
-  /**
-   * Returns the current breakpoint names.
-   *
-   * @returns the current breakpoint names
-   */
   // TODO: check array.includes(getCurrentBreakpoints()[0]))
   const getCurrentBreakpoints: GetCurrentBreakpointsFnc = () => {
     let bps: string[] = [];
@@ -159,28 +154,15 @@ const breakpoints = (breakpointDefinitions: BreakpointDefinitions): BreakpointFn
     getCurrentBreakpoints(),
     bps,
   );
+
   const includesBreakpoint: IncludesBreakpointFnc = (bp) => includesBreakpoints([bp]);
 
-  /**
-   * Create an observable emitting values for entering or leaving a breakpoint.
-   *
-   * @param bp the breakpoint name
-   *
-   * @returns an Observerable containing entering/leaving the breakpoint
-   */
   const breakpointsChange: BreakpointsChangeFnc = (bp) => breakpointsChanges$.pipe(
     filter(({ curr, prev }) => [curr, prev].some((b) => breakpointListContainsBreakpoint(b, bp))),
     filter(({ curr, prev }) => curr.includes(bp) !== prev.includes(bp)),
     map(({ curr }) => curr.includes(bp)),
   );
 
-  /**
-   * Create an observable emitting values for entering or leaving a breakpoint range
-   *
-   * @param range  an array containing a range of breakpoints
-   *
-   * @returns an Oberservable containing entering/leaving the breakpoint range
-   */
   const breakpointsInRange: BreakpointsInRangeFnc = (range) => {
     const isInRange = (bpl: string[]): boolean => breakpointListContainsBreakpoints(bpl, range);
     return breakpointsChanges$.pipe(
@@ -193,10 +175,45 @@ const breakpoints = (breakpointDefinitions: BreakpointDefinitions): BreakpointFn
   return {
     breakpointsChanges$,
     breakpointsChangesBehavior$,
+
+    /**
+     * Returns the current breakpoint names.
+     *
+     * @returns the current breakpoint names
+     */
     getCurrentBreakpoints,
+
+    /**
+     * Returns true if the current breakpoints contain breakpoints which are part of the given array.
+     *
+     * @param bps an array of breakpoint names
+     */
     includesBreakpoints,
+
+    /**
+     * Returns `true` if the given breakpoint is part of the current active breakpoints.
+     *
+     * @param bp the breakpoint
+     * @returns `true` if the breakpoint is included in current breakpoints
+     */
     includesBreakpoint,
+
+    /**
+     * Create an observable emitting values for entering or leaving a breakpoint.
+     *
+     * @param bp the breakpoint name
+     *
+     * @returns an Observerable containing entering/leaving the breakpoint
+     */
     breakpointsChange,
+
+    /**
+     * Create an observable emitting values for entering or leaving a breakpoint range
+     *
+     * @param range  an array containing a range of breakpoints
+     *
+     * @returns an Oberservable containing entering/leaving the breakpoint range
+     */
     breakpointsInRange,
   };
 };
