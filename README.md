@@ -2,20 +2,30 @@
 
 # breakpoint-changes-rx
 
-> Detect and handle breakpoint changes using RxJS Observables
+> Detect and handle viewport changes. Using RxJS Observables
 
-This package helps to detect current breakpoints and breakpoint changes. It initializes with a breakpoint configuration and provides Observables and useful functions.
-Multiple breakpoints at the same time are supported.
+You have a responsive web site and want to handle viewport state with ease?
 
-> ⚠️️️️⚠️⚠️ WARNING: Version 3.x drops support for CommonJS and AMD. Target is ES2017 ⚠️⚠️⚠️
->
-> Version 3.0.0 only ships as ES module. Also the target version of this package is ES2017. If you need to support older browsers you need to transpile to a prior ES version.
+Here we are. Handing viewport state with the help of RxJS.
 
-> ⚠️️️️⚠️⚠️ WARNING: Version 2.x and beyond ⚠️⚠️⚠️
->
-> Version 2.0.0 removed the usage of the deprecated [MediaQueryList.addListener](https://developer.mozilla.org/en-US/docs/Web/API/MediaQueryList/addListener).
-> Instead it uses [MediaQueryList.onchange](https://developer.mozilla.org/en-US/docs/Web/API/MediaQueryList/onchange). See compatibility table before using it.
-> If needed I will continue provide changes to version 1.x which is using the deprecated function.
+```typescript
+import breakpoints, { parseBreakpoints } from 'breakpoint-changes-rx';
+import style from './style.scss';
+
+const breakpointDefinitions = parseBreakpoints(style);
+
+const bps = breakpoints(breakpointDefinitions);
+
+console.log('current breakpoints: %o', bps.getCurrentBreakpoints());
+```
+
+## What are the current viewports?
+
+```typescript
+console.log(
+  breakpoints.getCurrentBreakpoints(), // [ "md", "lg" } ]
+);
+```
 
 ## Install
 
@@ -28,6 +38,7 @@ yarn add breakpoint-changes-rx
 This function initializes the breakpoint detection and returns an object containing following properties:
 
 - [breakpoint-changes-rx](#breakpoint-changes-rx)
+  - [What are the current viewports?](#what-are-the-current-viewports)
   - [Install](#install)
   - [`breakpoints(breakpointDefinitions)`](#breakpointsbreakpointdefinitions)
     - [`breakpointsChanges$`](#breakpointschanges)
@@ -41,8 +52,6 @@ This function initializes the breakpoint detection and returns an object contain
     - [Format](#format)
     - [`parseBreakpoints(object, config)`](#parsebreakpointsobject-config)
   - [License](#license)
-
-> ℹ️ [`window.matchMedia()`](https://developer.mozilla.org/en-US/docs/Web/API/Window/matchMedia) and [MediaQueryList.onchange](https://developer.mozilla.org/en-US/docs/Web/API/MediaQueryList/onchange) are used so only browsers supporting this features can be used.
 
 For details about the breakpointDefinitions see [Configuration](#Configuration) section
 
