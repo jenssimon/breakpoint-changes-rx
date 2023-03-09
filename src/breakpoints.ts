@@ -56,12 +56,11 @@ export const parseBreakpoints = (
   }, {});
 };
 
-const breakpoints = (breakpointDefinitions: BreakpointDefinitions) => {
-  type BreakpointName = keyof typeof breakpointDefinitions;
-  const initialBreakpoints: BreakpointName[] = [];
+const breakpoints = <T extends BreakpointDefinitions, K extends keyof T>(breakpointDefinitions: T) => {
+  const initialBreakpoints: K[] = [];
   const breakpointsChanges$ = merge(
     ...Object.entries(breakpointDefinitions)
-      .map(([name, breakpoint]): Observable<{ name: BreakpointName; matches: boolean }> => {
+      .map(([name, breakpoint]): Observable<{ name: K; matches: boolean }> => {
         const { min, max } = breakpoint;
         // matchMedia, build media query
         const mediaQueryList = matchMedia([['min', min], ['max', max]]
@@ -76,12 +75,12 @@ const breakpoints = (breakpointDefinitions: BreakpointDefinitions) => {
 
         // set the current breakpoints
         if (mediaQueryList.matches) {
-          initialBreakpoints.push(name);
+          initialBreakpoints.push(name as K);
         }
 
         return new Observable((subscriber): void => {
           mediaQueryList.addEventListener('change', ({ matches }) => {
-            subscriber.next({ name, matches });
+            subscriber.next({ name: name as K, matches });
           });
         });
       }),
@@ -104,31 +103,31 @@ const breakpoints = (breakpointDefinitions: BreakpointDefinitions) => {
         }
       });
       return { curr, prev };
-    }, { curr: initialBreakpoints, prev: [] as BreakpointName[] }), // initial value
+    }, { curr: initialBreakpoints, prev: [] as K[] }), // initial value
 
     share(), // multicast
   );
 
-  const breakpointsChangesBehavior$ = new BehaviorSubject({ curr: initialBreakpoints, prev: [] as BreakpointName[] });
+  const breakpointsChangesBehavior$ = new BehaviorSubject({ curr: initialBreakpoints, prev: [] as K[] });
   breakpointsChanges$.subscribe(breakpointsChangesBehavior$);
 
   // TODO: check array.includes(getCurrentBreakpoints()[0]))
   const getCurrentBreakpoints = () => {
-    let bps: BreakpointName[] = [];
+    let bps: K[] = [];
     breakpointsChangesBehavior$.subscribe({
       next: ({ curr }) => {
         bps = curr;
       },
     });
-    return bps as BreakpointName[];
+    return bps as K[];
   };
 
-  const breakpointListContainsBreakpoint = (bpl: BreakpointName[], bp: BreakpointName) => bpl.includes(bp);
-  const breakpointListContainsBreakpoints = (bpl: BreakpointName[], bps: BreakpointName[]) => bps.some(
+  const breakpointListContainsBreakpoint = (bpl: K[], bp: K) => bpl.includes(bp);
+  const breakpointListContainsBreakpoints = (bpl: K[], bps: K[]) => bps.some(
     (bp) => bpl.includes(bp),
   );
 
-  const includesBreakpoints = (bps: BreakpointName[]) => breakpointListContainsBreakpoints(
+  const includesBreakpoints = (bps: K[]) => breakpointListContainsBreakpoints(
     getCurrentBreakpoints(),
     bps,
   );
@@ -149,7 +148,7 @@ const breakpoints = (breakpointDefinitions: BreakpointDefinitions) => {
      *
      * @param bps an array of breakpoint names
      */
-    includesBreakpoints: (bps: BreakpointName[]) => breakpointListContainsBreakpoints(
+    includesBreakpoints: (bps: K[]) => breakpointListContainsBreakpoints(
       getCurrentBreakpoints(),
       bps,
     ),
@@ -160,7 +159,7 @@ const breakpoints = (breakpointDefinitions: BreakpointDefinitions) => {
      * @param bp the breakpoint
      * @returns `true` if the breakpoint is included in current breakpoints
      */
-    includesBreakpoint: (bp: BreakpointName) => includesBreakpoints([bp]),
+    includesBreakpoint: (bp: K) => includesBreakpoints([bp]),
 
     /**
      * Create an observable emitting values for entering or leaving a breakpoint.
@@ -169,7 +168,7 @@ const breakpoints = (breakpointDefinitions: BreakpointDefinitions) => {
      *
      * @returns an Observerable containing entering/leaving the breakpoint
      */
-    breakpointsChange: (bp: BreakpointName) => breakpointsChanges$.pipe(
+    breakpointsChange: (bp: K) => breakpointsChanges$.pipe(
       filter(({ curr, prev }) => [curr, prev].some((b) => breakpointListContainsBreakpoint(b, bp))),
       filter(({ curr, prev }) => curr.includes(bp) !== prev.includes(bp)),
       map(({ curr }) => curr.includes(bp)),
@@ -182,8 +181,8 @@ const breakpoints = (breakpointDefinitions: BreakpointDefinitions) => {
      *
      * @returns an Oberservable containing entering/leaving the breakpoint range
      */
-    breakpointsInRange(range: BreakpointName[]) {
-      const isInRange = (bpl: BreakpointName[]) => breakpointListContainsBreakpoints(bpl, range);
+    breakpointsInRange(range: K[]) {
+      const isInRange = (bpl: K[]) => breakpointListContainsBreakpoints(bpl, range);
       return breakpointsChanges$.pipe(
         map(({ curr, prev }) => ({ curr: isInRange(curr), prev: isInRange(prev) })),
         filter(({ curr, prev }) => curr !== prev),
