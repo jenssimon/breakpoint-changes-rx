@@ -43,7 +43,7 @@
     "@commitlint/cli": "17.5.1",
     "@commitlint/config-conventional": "17.4.4",
     "@jenssimon/eslint-config-base": "6.6.13",
-    "@jenssimon/eslint-config-typescript": "3.6.34",
+    "@jenssimon/eslint-config-typescript": "3.6.35",
     "@types/jest": "29.5.0",
     "commitizen": "4.3.0",
     "cz-conventional-changelog": "3.3.0",
