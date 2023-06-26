@@ -1,9 +1,9 @@
 import {
   Observable, merge, BehaviorSubject,
-} from 'rxjs';
+} from 'rxjs'
 import {
   scan, filter, map, bufferTime, share,
-} from 'rxjs/operators';
+} from 'rxjs/operators'
 
 export interface BreakpointDefinition {
   min?: string | number;
@@ -19,15 +19,15 @@ export interface BreakpointParseConfig {
   isMin: (val: string) => boolean;
 }
 
-const nameMin = 'min';
-const nameMax = 'max';
+const nameMin = 'min'
+const nameMax = 'max'
 
 const defaultParseConfig: BreakpointParseConfig = {
   regex: /^breakpoint-(\w*)-((max)|(min))$/,
   groupName: 1,
   groupMinMax: 2,
   isMin: (val) => val === nameMin,
-};
+}
 
 export const parseBreakpoints = (
   object: Record<string, unknown>,
@@ -36,32 +36,32 @@ export const parseBreakpoints = (
   const parseConfig: BreakpointParseConfig = {
     ...defaultParseConfig,
     ...config,
-  };
+  }
   return Object.entries(object).reduce<BreakpointDefinitions>((obj, [key, value]) => {
-    const breakpointMatch = key.match(parseConfig.regex as RegExp);
+    const breakpointMatch = key.match(parseConfig.regex as RegExp)
     if (breakpointMatch && typeof value === 'string') {
-      const name = breakpointMatch[parseConfig.groupName as number];
-      let breakpoint = obj[name];
+      const name = breakpointMatch[parseConfig.groupName as number]
+      let breakpoint = obj[name]
       if (!breakpoint) {
-        breakpoint = {};
-        obj[name] = breakpoint;
+        breakpoint = {}
+        obj[name] = breakpoint
       }
       breakpoint[
         parseConfig.isMin(breakpointMatch[parseConfig.groupMinMax as number])
           ? nameMin
           : nameMax
-      ] = value as string;
+      ] = value as string
     }
-    return obj;
-  }, {});
-};
+    return obj
+  }, {})
+}
 
 const breakpoints = <T extends BreakpointDefinitions, K extends keyof T>(breakpointDefinitions: T) => {
-  const initialBreakpoints: K[] = [];
+  const initialBreakpoints: K[] = []
   const breakpointsChanges$ = merge(
     ...Object.entries(breakpointDefinitions)
       .map(([name, breakpoint]): Observable<{ name: K; matches: boolean }> => {
-        const { min, max } = breakpoint;
+        const { min, max } = breakpoint
         // matchMedia, build media query
         const mediaQueryList = matchMedia([['min', min], ['max', max]]
           .filter(([, val]) => val)
@@ -71,18 +71,18 @@ const breakpoints = <T extends BreakpointDefinitions, K extends keyof T>(breakpo
               ? val
               : `${String(val)}px`
           })`)
-          .join(' and '));
+          .join(' and '))
 
         // set the current breakpoints
         if (mediaQueryList.matches) {
-          initialBreakpoints.push(name as K);
+          initialBreakpoints.push(name as K)
         }
 
         return new Observable((subscriber): void => {
           mediaQueryList.addEventListener('change', ({ matches }) => {
-            subscriber.next({ name: name as K, matches });
-          });
-        });
+            subscriber.next({ name: name as K, matches })
+          })
+        })
       }),
   ).pipe(
     bufferTime(250), // collect and combine multiple matchMedia() matches at the same time
@@ -90,47 +90,47 @@ const breakpoints = <T extends BreakpointDefinitions, K extends keyof T>(breakpo
 
     // convert it to the final breakpoint change object
     scan(({ curr: prev }, actual) => {
-      const curr = [...prev]; // add previous breakpoint but without the removed ones
+      const curr = [...prev] // add previous breakpoint but without the removed ones
       actual.forEach(({ matches, name }) => {
         if (!matches) {
-          const idx = curr.indexOf(name);
+          const idx = curr.indexOf(name)
           /* istanbul ignore else */
           if (idx !== -1) {
-            curr.splice(idx, 1);
+            curr.splice(idx, 1)
           }
         } else /* istanbul ignore else */ if (!curr.includes(name)) {
-          curr.push(name);
+          curr.push(name)
         }
-      });
-      return { curr, prev };
+      })
+      return { curr, prev }
     }, { curr: initialBreakpoints, prev: [] as K[] }), // initial value
 
     share(), // multicast
-  );
+  )
 
-  const breakpointsChangesBehavior$ = new BehaviorSubject({ curr: initialBreakpoints, prev: [] as K[] });
-  breakpointsChanges$.subscribe(breakpointsChangesBehavior$);
+  const breakpointsChangesBehavior$ = new BehaviorSubject({ curr: initialBreakpoints, prev: [] as K[] })
+  breakpointsChanges$.subscribe(breakpointsChangesBehavior$)
 
   // TODO: check array.includes(getCurrentBreakpoints()[0]))
   const getCurrentBreakpoints = () => {
-    let bps: K[] = [];
+    let bps: K[] = []
     breakpointsChangesBehavior$.subscribe({
       next: ({ curr }) => {
-        bps = curr;
+        bps = curr
       },
-    });
-    return bps as K[];
-  };
+    })
+    return bps as K[]
+  }
 
-  const breakpointListContainsBreakpoint = (bpl: K[], bp: K) => bpl.includes(bp);
+  const breakpointListContainsBreakpoint = (bpl: K[], bp: K) => bpl.includes(bp)
   const breakpointListContainsBreakpoints = (bpl: K[], bps: K[]) => bps.some(
     (bp) => bpl.includes(bp),
-  );
+  )
 
   const includesBreakpoints = (bps: K[]) => breakpointListContainsBreakpoints(
     getCurrentBreakpoints(),
     bps,
-  );
+  )
 
   return {
     breakpointsChanges$,
@@ -182,14 +182,14 @@ const breakpoints = <T extends BreakpointDefinitions, K extends keyof T>(breakpo
      * @returns an Oberservable containing entering/leaving the breakpoint range
      */
     breakpointsInRange(range: K[]) {
-      const isInRange = (bpl: K[]) => breakpointListContainsBreakpoints(bpl, range);
+      const isInRange = (bpl: K[]) => breakpointListContainsBreakpoints(bpl, range)
       return breakpointsChanges$.pipe(
         map(({ curr, prev }) => ({ curr: isInRange(curr), prev: isInRange(prev) })),
         filter(({ curr, prev }) => curr !== prev),
         map(({ curr }) => curr),
-      );
+      )
     },
-  };
-};
+  }
+}
 
-export default breakpoints;
+export default breakpoints

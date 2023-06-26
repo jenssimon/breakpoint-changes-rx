@@ -25,7 +25,7 @@
     "README.md"
   ],
   "scripts": {
-    "lint": "eslint --fix --ext .tsx,.ts,.jsx,.js ./ && tsc --noEmit",
+    "lint": "eslint --fix --ext .tsx,.ts,.mts,.cts,.jsx,.js,.mjs,.cjs ./ && tsc --noEmit",
     "build": "tsc",
     "prepublishOnly": "tsc",
     "test": "jest --coverage",
