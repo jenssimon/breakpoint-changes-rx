@@ -25,12 +25,12 @@
     "README.md"
   ],
   "scripts": {
-    "lint": "eslint --fix --ext .tsx,.ts,.jsx,.js ./ && tsc --noEmit",
+    "lint": "eslint --fix --ext .tsx,.ts,.mts,.cts,.jsx,.js,.mjs,.cjs ./ && tsc --noEmit",
     "build": "tsc",
     "prepublishOnly": "tsc",
     "test": "jest --coverage",
     "ci-test": "run-s \"ci-test:*\"",
-    "ci-test:lint": "eslint --ext .tsx,.ts,.jsx,.js ./",
+    "ci-test:lint": "eslint --ext .tsx,.ts,.mts,.cts,.jsx,.js,.mjs,.cjs ./",
     "ci-test:tsc": "tsc --noEmit",
     "ci-test:test": "jest --coverage",
     "commit": "cz",
@@ -42,7 +42,7 @@
   "devDependencies": {
     "@commitlint/cli": "17.6.6",
     "@commitlint/config-conventional": "17.6.6",
-    "@jenssimon/eslint-config-base": "6.9.0",
+    "@jenssimon/eslint-config-base": "7.0.1",
     "@jenssimon/eslint-config-typescript": "3.7.6",
     "@types/jest": "29.5.2",
     "commitizen": "4.3.0",
