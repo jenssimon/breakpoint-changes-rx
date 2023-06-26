@@ -30,7 +30,7 @@
     "prepublishOnly": "tsc",
     "test": "jest --coverage",
     "ci-test": "run-s \"ci-test:*\"",
-    "ci-test:lint": "eslint --ext .tsx,.ts,.jsx,.js ./",
+    "ci-test:lint": "eslint --ext .tsx,.ts,.mts,.cts,.jsx,.js,.mjs,.cjs ./",
     "ci-test:tsc": "tsc --noEmit",
     "ci-test:test": "jest --coverage",
     "commit": "cz",
