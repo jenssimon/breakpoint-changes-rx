@@ -6,17 +6,17 @@ import {
 } from 'rxjs/operators'
 
 export interface BreakpointDefinition {
-  min?: string | number;
-  max?: string | number;
+  min?: string | number
+  max?: string | number
 }
 
 export type BreakpointDefinitions = Record<string, BreakpointDefinition>;
 
 export interface BreakpointParseConfig {
-  regex?: RegExp;
-  groupName?: number;
-  groupMinMax?: number;
-  isMin: (val: string) => boolean;
+  regex?: RegExp
+  groupName?: number
+  groupMinMax?: number
+  isMin: (val: string) => boolean
 }
 
 const nameMin = 'min'
@@ -60,7 +60,7 @@ const breakpoints = <T extends BreakpointDefinitions, K extends keyof T>(breakpo
   const initialBreakpoints: K[] = []
   const breakpointsChanges$ = merge(
     ...Object.entries(breakpointDefinitions)
-      .map(([name, breakpoint]): Observable<{ name: K; matches: boolean }> => {
+      .map(([name, breakpoint]): Observable<{ name: K, matches: boolean }> => {
         const { min, max } = breakpoint
         // matchMedia, build media query
         const mediaQueryList = matchMedia([['min', min], ['max', max]]
