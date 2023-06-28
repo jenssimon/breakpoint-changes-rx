@@ -8,25 +8,19 @@ import type { BreakpointDefinitions } from '../breakpoints'
 
 type AnyFunction = (args?: unknown) => unknown
 
-/**
- * Helper function to generate breakpoint data
- *
- * @param multipleMatches contains multiple matches
- *
- * @return breakpoint data
- */
-const testBreakpointData = (multipleMatches = false): BreakpointDefinitions => ({
+const TEST_BREAKPOINT_DATA = {
   sm: { max: '767px' },
   md: { min: '768px', max: '991px' },
   lg: { min: '992px', max: '1199px' },
   xl: { min: '1200px' },
+}
 
-  // for multiple matches add additional breakpoints
-  ...multipleMatches ? {
-    mdx: { min: '768px', max: '849px' },
-    mdy: { min: '850px', max: '991px' },
-  } : {},
-})
+// for multiple matches add additional breakpoints
+const TEST_BREAKPOINT_DATA_MULTIPLE_MATCHES = {
+  ...TEST_BREAKPOINT_DATA,
+  mdx: { min: '768px', max: '849px' },
+  mdy: { min: '850px', max: '991px' },
+}
 
 /**
  * Generates a media query for a breakpoint.
@@ -35,110 +29,160 @@ const testBreakpointData = (multipleMatches = false): BreakpointDefinitions => (
  * @param bps  the breakpoint definitions
  * @return the media query for the breakpoint
  */
-const mqFor = (breakpoint: string, bps: BreakpointDefinitions): string => (Object.entries(bps)
-  .filter(([name]) => name === breakpoint)
-  .map(([, { min, max }]): string => [['min', min], ['max', max]]
-    .filter(([, val]) => val)
-    .map(([str, val]) => `(${str}-width: ${val})`)
-    .join(' and '))
+const mqFor = (breakpoint: string, bps: BreakpointDefinitions): string => (
+  Object.entries(bps)
+    .filter(([name]) => name === breakpoint)
+    .map(([, { min, max }]) => [
+      ['min', min], ['max', max],
+    ]
+      .filter(([, val]) => val)
+      .map(([str, val]) => `(${str}-width: ${val})`)
+      .join(' and '))
 ).reduce((prev, curr) => curr)
+
+const mockMatchMedia = (matches: (query: string) => boolean) => {
+  const matchMediaQueries: string[] = []
+  const mqlListeners: Map<string, AnyFunction> = new Map()
+
+  const listenerMock = jest.fn()
+  const matchMediaImpl = jest.fn().mockImplementation((query: string) => {
+    matchMediaQueries.push(query)
+    return {
+      matches: matches(query), // "lg" matches
+      media: query,
+      onchange: null,
+      addEventListener: (event: string, fnc: AnyFunction): void => {
+        mqlListeners.set(query, fnc)
+        listenerMock(event, fnc)
+      },
+    }
+  })
+
+  Object.defineProperty(window, 'matchMedia', {
+    writable: true,
+    value: matchMediaImpl,
+  })
+
+  return {
+    matchMediaQueries,
+    listenerMock,
+    matchMediaImpl,
+    mqlListeners,
+  }
+}
 
 /*
  * parseBreakpoints()
  */
 describe('parseBreakpoints', () => {
-  it('parses breakpoint information from a possible return value of a CSS module', () => {
-    expect(parseBreakpoints({
-      /* eslint-disable @typescript-eslint/naming-convention */
-      'foo-sm-min': '100px',
-      'breakpoint-xl-min': '1200px',
-      foo: 'bar',
-      'breakpoint-sm-max': '767px',
-      'breakpoint-md-max': '991px',
-      bar: true,
-      'breakpoint-lg-min': '992px',
-      'breakpoint-md-min': '768px',
-      'breakpoint-lg-max': '1199px',
-      baz: 123,
-      /* eslint-enable @typescript-eslint/naming-convention */
-    })).toStrictEqual(testBreakpointData())
-  })
+  it.each([
+    /* eslint-disable @typescript-eslint/naming-convention */
+    [
+      'parses breakpoint information from a possible return value of a CSS module',
+      {
+        'foo-sm-min': '100px',
+        'breakpoint-xl-min': '1200px',
+        foo: 'bar',
+        'breakpoint-sm-max': '767px',
+        'breakpoint-md-max': '991px',
+        bar: true,
+        'breakpoint-lg-min': '992px',
+        'breakpoint-md-min': '768px',
+        'breakpoint-lg-max': '1199px',
+        baz: 123,
+      },
+      undefined,
 
-  it('can use a custom config', () => {
-    expect(parseBreakpoints({
-      /* eslint-disable @typescript-eslint/naming-convention */
-      'breakpoint-sm-max': '767px',
-      'bp-sm-max': '500px',
-      /* eslint-enable @typescript-eslint/naming-convention */
-    }, { regex: /^bp-(\w*)-((max)|(min))$/ })).toStrictEqual({
-      sm: { max: '500px' },
-    })
+      // expected
+      TEST_BREAKPOINT_DATA,
+    ],
 
-    expect(parseBreakpoints({
-      /* eslint-disable @typescript-eslint/naming-convention */
-      'breakpoint-sm-max': '767px',
-      'breakpoint-ab-sm-max': '500px',
-      /* eslint-enable @typescript-eslint/naming-convention */
-    }, {
-      regex: /^breakpoint-(ab-(\w*))-((max)|(min))$/,
-      groupName: 2,
-    })).toStrictEqual({
-      sm: { max: '500px' },
-    })
+    [
+      'can use a custom config (regular expression)',
+      {
+        'breakpoint-sm-max': '767px',
+        'bp-sm-max': '500px',
+      },
+      {
+        regex: /^bp-(\w*)-((max)|(min))$/,
+      },
 
-    expect(parseBreakpoints({
-      /* eslint-disable @typescript-eslint/naming-convention */
-      'breakpoint-sm-max': '767px',
-      'breakpoint-xm-xmax': '500px',
-      /* eslint-enable @typescript-eslint/naming-convention */
-    }, {
-      regex: /^breakpoint-(\w*)-(x)((max)|(min))$/,
-      groupMinMax: 3,
-    })).toStrictEqual({
-      xm: { max: '500px' },
-    })
+      // expected
+      {
+        sm: { max: '500px' },
+      },
+    ],
 
-    expect(parseBreakpoints({
-      /* eslint-disable @typescript-eslint/naming-convention */
-      'breakpoint-sm-min': '767px',
-      'breakpoint-xm-mini': '500px',
-      /* eslint-enable @typescript-eslint/naming-convention */
-    }, {
-      regex: /^breakpoint-(\w*)-((maxi)|(mini))$/,
-      isMin: (value) => value === 'mini',
-    })).toStrictEqual({
-      xm: { min: '500px' },
-    })
+    [
+      'can use a custom config (regular expression with groupName)',
+      {
+        'breakpoint-sm-max': '767px',
+        'breakpoint-ab-sm-max': '500px',
+      },
+      {
+        regex: /^breakpoint-(ab-(\w*))-((max)|(min))$/,
+        groupName: 2,
+      },
+
+      // expected
+      {
+        sm: { max: '500px' },
+      },
+    ],
+
+    [
+      'can use a custom config (regular expression with groupMinMax)',
+      {
+        'breakpoint-sm-max': '767px',
+        'breakpoint-xm-xmax': '500px',
+      },
+      {
+        regex: /^breakpoint-(\w*)-(x)((max)|(min))$/,
+        groupMinMax: 3,
+      },
+
+      // expected
+      {
+        xm: { max: '500px' },
+      },
+    ],
+
+    [
+      'can use a custom config  (regular expression with isMin() function)',
+      {
+        'breakpoint-sm-min': '767px',
+        'breakpoint-xm-mini': '500px',
+      },
+      {
+        regex: /^breakpoint-(\w*)-((maxi)|(mini))$/,
+        isMin: (value: string) => value === 'mini',
+      },
+
+      // expected
+      {
+        xm: { min: '500px' },
+      },
+    ],
+    /* eslint-enable @typescript-eslint/naming-convention */
+  ])('%s', (name, sample, options, expected) => {
+    expect(parseBreakpoints(sample, options)).toStrictEqual(expected)
   })
 })
 
 describe('initialization and detect breakpoints on init', () => {
   it('initializes with one detected breakpoint', () => {
-    const bpData = testBreakpointData()
-    const matchMediaQueries: string[] = []
-    const listenerMock = jest.fn()
-    const matchMediaImpl = jest.fn().mockImplementation((query) => {
-      matchMediaQueries.push(query)
-      return {
-        matches: query === mqFor('lg', bpData), // "lg" matches
-        media: query,
-        onchange: null,
-        addEventListener: listenerMock,
-      }
-    })
-    Object.defineProperty(window, 'matchMedia', {
-      writable: true,
-      value: matchMediaImpl,
-    })
+    const {
+      matchMediaQueries, listenerMock, matchMediaImpl,
+    } = mockMatchMedia((query) => query === mqFor('lg', TEST_BREAKPOINT_DATA)) // "lg" matches
 
-    const bp = breakpoints(bpData)
-    expect(matchMediaImpl).toHaveBeenCalledTimes(4) // 4 breakpoints -> 4 matchMedia calls
+    const bp = breakpoints(TEST_BREAKPOINT_DATA as BreakpointDefinitions)
+
+    expect(matchMediaImpl).toHaveBeenCalledTimes(4); // 4 breakpoints -> 4 matchMedia calls
 
     // are the correct media queries used?
-    expect(matchMediaQueries).toContain(mqFor('sm', bpData))
-    expect(matchMediaQueries).toContain(mqFor('md', bpData))
-    expect(matchMediaQueries).toContain(mqFor('lg', bpData))
-    expect(matchMediaQueries).toContain(mqFor('xl', bpData))
+    (['sm', 'md', 'lg', 'xl']).forEach((bpName: string) => {
+      expect(matchMediaQueries).toContain(mqFor(bpName, TEST_BREAKPOINT_DATA))
+    })
 
     expect(listenerMock).toHaveBeenCalledTimes(4) // listeners for all media queries added?
 
@@ -150,50 +194,34 @@ describe('initialization and detect breakpoints on init', () => {
 
     const bpBehaviorSubscriber = jest.fn()
     bp.breakpointsChangesBehavior$.subscribe(bpBehaviorSubscriber)
+
     expect(bpBehaviorSubscriber).toHaveBeenCalledTimes(1)
-    expect(bpBehaviorSubscriber.mock.calls[0][0]).toStrictEqual({ curr: ['lg'], prev: [] })
+    expect(bpBehaviorSubscriber.mock.calls[0][0]).toStrictEqual({
+      curr: ['lg'], prev: [],
+    });
 
     // includesBreakpoint()
-    expect(bp.includesBreakpoint('sm')).toBe(false)
-    expect(bp.includesBreakpoint('md')).toBe(false)
-    expect(bp.includesBreakpoint('lg')).toBe(true)
-    expect(bp.includesBreakpoint('xl')).toBe(false)
-    expect(bp.includesBreakpoint('foo')).toBe(false)
+    ['sm', 'md', 'lg', 'xl', 'foo'].forEach((bpName: string) => {
+      expect(bp.includesBreakpoint(bpName)).toBe(bpName === 'lg')
+    });
 
     // includesBreakpoints()
-    expect(bp.includesBreakpoints(['sm'])).toBe(false)
-    expect(bp.includesBreakpoints(['md'])).toBe(false)
-    expect(bp.includesBreakpoints(['lg'])).toBe(true)
-    expect(bp.includesBreakpoints(['xl'])).toBe(false)
-    expect(bp.includesBreakpoints(['foo'])).toBe(false)
-
-    expect(bp.includesBreakpoints(['sm', 'md'])).toBe(false)
-    expect(bp.includesBreakpoints(['lg', 'xl'])).toBe(true)
+    [
+      ['sm'], ['md'], ['lg'], ['xl'], ['foo'],
+      ['sm', 'md'], ['lg', 'xl'],
+    ].forEach((bpNames: string[]) => {
+      expect(bp.includesBreakpoints(bpNames)).toBe(bpNames.includes('lg'))
+    })
   })
 
   it('initializes with multiple detected breakpoints', () => {
-    const bpData = testBreakpointData(true)
-    const matchMediaQueries: string[] = []
-    const listenerMock = jest.fn()
-    const matchMediaImpl = jest.fn().mockImplementation((query) => {
-      matchMediaQueries.push(query)
-      return {
-        matches: [
-          // "md" and "mdx" matches
-          mqFor('md', bpData),
-          mqFor('mdx', bpData),
-        ].includes(query),
-        media: query,
-        onchange: null,
-        addEventListener: listenerMock,
-      }
-    })
-    Object.defineProperty(window, 'matchMedia', {
-      writable: true,
-      value: matchMediaImpl,
-    })
+    const {
+      matchMediaQueries, listenerMock, matchMediaImpl,
+    } = mockMatchMedia((query) => ['md', 'mdx']
+      .map((bp) => mqFor(bp, TEST_BREAKPOINT_DATA_MULTIPLE_MATCHES))
+      .includes(query)) // "md" and "mdx" matches
 
-    const bp = breakpoints(bpData)
+    const bp = breakpoints(TEST_BREAKPOINT_DATA_MULTIPLE_MATCHES)
     expect(matchMediaImpl).toHaveBeenCalledTimes(6) // 6 breakpoints -> 6 matchMedia calls
 
     const bpSubscriber = jest.fn()
@@ -203,68 +231,42 @@ describe('initialization and detect breakpoints on init', () => {
     const bpBehaviorSubscriber = jest.fn()
     bp.breakpointsChangesBehavior$.subscribe(bpBehaviorSubscriber)
     expect(bpBehaviorSubscriber).toHaveBeenCalledTimes(1)
-    expect(bpBehaviorSubscriber.mock.calls[0][0]).toStrictEqual({ curr: ['md', 'mdx'], prev: [] })
+    expect(bpBehaviorSubscriber.mock.calls[0][0]).toStrictEqual({ curr: ['md', 'mdx'], prev: [] });
 
-    expect(matchMediaQueries).toContain(mqFor('sm', bpData))
-    expect(matchMediaQueries).toContain(mqFor('md', bpData))
-    expect(matchMediaQueries).toContain(mqFor('mdx', bpData))
-    expect(matchMediaQueries).toContain(mqFor('mdy', bpData))
-    expect(matchMediaQueries).toContain(mqFor('lg', bpData))
-    expect(matchMediaQueries).toContain(mqFor('xl', bpData))
+    ['sm', 'md', 'mdx', 'mdy', 'lg', 'xl'].forEach((bpName: string) => {
+      expect(matchMediaQueries).toContain(mqFor(bpName, TEST_BREAKPOINT_DATA_MULTIPLE_MATCHES))
+    })
 
     expect(listenerMock).toHaveBeenCalledTimes(6)
 
-    expect(bp.getCurrentBreakpoints()).toStrictEqual(['md', 'mdx'])
+    expect(bp.getCurrentBreakpoints()).toStrictEqual(['md', 'mdx']);
 
     // includesBreakpoint()
-    expect(bp.includesBreakpoint('sm')).toBe(false)
-    expect(bp.includesBreakpoint('md')).toBe(true)
-    expect(bp.includesBreakpoint('mdx')).toBe(true)
-    expect(bp.includesBreakpoint('mdy')).toBe(false)
-    expect(bp.includesBreakpoint('lg')).toBe(false)
-    expect(bp.includesBreakpoint('xl')).toBe(false)
-    expect(bp.includesBreakpoint('foo')).toBe(false)
+    ['sm', 'md', 'mdx', 'mdy', 'lg', 'xl', 'foo'].forEach((bpName) => {
+      expect(bp.includesBreakpoint(bpName as 'sm')).toBe(['md', 'mdx'].includes(bpName))
+    });
 
     // includesBreakpoints()
-    expect(bp.includesBreakpoints(['sm'])).toBe(false)
-    expect(bp.includesBreakpoints(['md'])).toBe(true)
-    expect(bp.includesBreakpoints(['mdx'])).toBe(true)
-    expect(bp.includesBreakpoints(['mdy'])).toBe(false)
-    expect(bp.includesBreakpoints(['lg'])).toBe(false)
-    expect(bp.includesBreakpoints(['xl'])).toBe(false)
-    expect(bp.includesBreakpoints(['foo'])).toBe(false)
-
-    expect(bp.includesBreakpoints(['sm', 'md'])).toBe(true)
-    expect(bp.includesBreakpoints(['md', 'mdx'])).toBe(true)
-    expect(bp.includesBreakpoints(['md', 'mdy'])).toBe(true)
-    expect(bp.includesBreakpoints(['md', 'lg'])).toBe(true)
-    expect(bp.includesBreakpoints(['mdx', 'mdy'])).toBe(true)
-    expect(bp.includesBreakpoints(['mdx', 'lg'])).toBe(true)
-    expect(bp.includesBreakpoints(['mdy', 'lg'])).toBe(false)
-    expect(bp.includesBreakpoints(['lg', 'xl'])).toBe(false)
+    [
+      ['sm'], ['md'], ['mdx'], ['mdy'], ['lg'], ['xl'], ['foo'],
+      ['sm', 'md'], ['md', 'mdx'], ['md', 'mdy'], ['md', 'lg'], ['mdx', 'mdy'], ['mdy', 'lg'], ['lg', 'xl'],
+    ].forEach((bpNames: string[]) => {
+      expect(bp.includesBreakpoints(bpNames as 'md'[])).toBe(
+        // eslint-disable-next-line jest/no-conditional-in-test
+        bpNames.includes('md')
+        || bpNames.includes('mdx'),
+      )
+    })
   })
 
   it('initializes with number values for a breakpoint', () => {
-    const bpData = {
-      md: { min: 768, max: 991 },
-    }
-    const matchMediaQueries: string[] = []
-    const listenerMock = jest.fn()
-    const matchMediaImpl = jest.fn().mockImplementation((query) => {
-      matchMediaQueries.push(query)
-      return {
-        matches: query === '(min-width: 768px) and (max-width: 991px)',
-        media: query,
-        onchange: null,
-        addEventListener: listenerMock,
-      }
-    })
-    Object.defineProperty(window, 'matchMedia', {
-      writable: true,
-      value: matchMediaImpl,
-    })
+    const {
+      matchMediaQueries, listenerMock, matchMediaImpl,
+    } = mockMatchMedia((query) => query === '(min-width: 768px) and (max-width: 991px)')
 
-    const bp = breakpoints(bpData)
+    const bp = breakpoints({
+      md: { min: 768, max: 991 },
+    })
     expect(matchMediaImpl).toHaveBeenCalledTimes(1) // 1 breakpoints -> 1 matchMedia calls
 
     // are the correct media queries used?
@@ -278,23 +280,11 @@ describe('initialization and detect breakpoints on init', () => {
 
 describe('detect breakpoint changes', () => {
   it('detects breakpoint change (single breakpoint scenario)', () => {
-    const bpData = testBreakpointData()
+    const bpData = TEST_BREAKPOINT_DATA
     jest.useFakeTimers()
-    const mqlListeners: Map<string, AnyFunction> = new Map()
-    const matchMediaImpl = jest.fn().mockImplementation((query) => ({
-      matches: [
-        mqFor('lg', bpData), // initial match "lg"
-      ].includes(query),
-      media: query,
-      onchange: null,
-      addEventListener: (event: string, fnc: AnyFunction): void => {
-        mqlListeners.set(query, fnc)
-      },
-    }))
-    Object.defineProperty(window, 'matchMedia', {
-      writable: true,
-      value: matchMediaImpl,
-    })
+    const { mqlListeners } = mockMatchMedia((query) => [
+      mqFor('lg', bpData), // initial match "lg"
+    ].includes(query))
 
     const bp = breakpoints(bpData)
 
@@ -302,18 +292,19 @@ describe('detect breakpoint changes', () => {
 
     const breakpointChangesObservable = jest.fn()
     bp.breakpointsChanges$.subscribe(breakpointChangesObservable)
-    const smObservable = jest.fn()
-    bp.breakpointsChange('sm').subscribe(smObservable)
-    const mdObservable = jest.fn()
-    bp.breakpointsChange('md').subscribe(mdObservable)
-    const lgObservable = jest.fn()
-    bp.breakpointsChange('lg').subscribe(lgObservable)
+
+    const [smObservable, mdObservable, lgObservable] = ['sm', 'md', 'lg']
+      .map((bpName) => {
+        const mock = jest.fn()
+        bp.breakpointsChange(bpName as 'sm').subscribe(mock)
+        return mock
+      })
+
     const breakpointRangeObservable = jest.fn()
     bp.breakpointsInRange(['sm', 'md']).subscribe(breakpointRangeObservable)
 
-    const smListener = mqlListeners.get(mqFor('sm', bpData)) as AnyFunction
-    const mdListener = mqlListeners.get(mqFor('md', bpData)) as AnyFunction
-    const lgListener = mqlListeners.get(mqFor('lg', bpData)) as AnyFunction
+    const [smListener, mdListener, lgListener] = ['sm', 'md', 'lg']
+      .map((bpName) => mqlListeners.get(mqFor(bpName, bpData)) as AnyFunction)
 
     // change to "md"
     mdListener({ matches: true })
@@ -371,45 +362,29 @@ describe('detect breakpoint changes', () => {
   })
 
   it('detects breakpoint change (multiple breakpoint scenario)', () => {
-    const bpData = testBreakpointData(true)
     jest.useFakeTimers()
-    const mqlListeners: Map<string, AnyFunction> = new Map()
 
-    const matchMediaImpl = jest.fn().mockImplementation((query) => ({
-      matches: [
-        mqFor('lg', bpData), // initial match "lg"
-      ].includes(query),
-      media: query,
-      onchange: null,
+    const { mqlListeners } = mockMatchMedia((query) => [
+      mqFor('lg', TEST_BREAKPOINT_DATA_MULTIPLE_MATCHES), // initial match "lg"
+    ].includes(query))
 
-      addEventListener: (event: string, fnc: AnyFunction): void => {
-        mqlListeners.set(query, fnc)
-      },
-    }))
-    Object.defineProperty(window, 'matchMedia', {
-      writable: true,
-      value: matchMediaImpl,
-    })
-
-    const bp = breakpoints(bpData)
+    const bp = breakpoints(TEST_BREAKPOINT_DATA_MULTIPLE_MATCHES)
 
     const breakpointChangesObservable = jest.fn()
     bp.breakpointsChanges$.subscribe(breakpointChangesObservable)
-    const mdObservable = jest.fn()
-    bp.breakpointsChange('md').subscribe(mdObservable)
-    const mdxObservable = jest.fn()
-    bp.breakpointsChange('mdx').subscribe(mdxObservable)
-    const mdyObservable = jest.fn()
-    bp.breakpointsChange('mdy').subscribe(mdyObservable)
-    const lgObservable = jest.fn()
-    bp.breakpointsChange('lg').subscribe(lgObservable)
+
+    const [mdObservable, mdxObservable, mdyObservable, lgObservable] = ['md', 'mdx', 'mdy', 'lg']
+      .map((bpName) => {
+        const mock = jest.fn()
+        bp.breakpointsChange(bpName as 'sm').subscribe(mock)
+        return mock
+      })
+
     const breakpointRangeObservable = jest.fn()
     bp.breakpointsInRange(['sm', 'md']).subscribe(breakpointRangeObservable)
 
-    const mdListener = mqlListeners.get(mqFor('md', bpData)) as AnyFunction
-    const mdxListener = mqlListeners.get(mqFor('mdx', bpData)) as AnyFunction
-    const mdyListener = mqlListeners.get(mqFor('mdy', bpData)) as AnyFunction
-    const lgListener = mqlListeners.get(mqFor('lg', bpData)) as AnyFunction
+    const [mdListener, mdxListener, mdyListener, lgListener] = ['md', 'mdx', 'mdy', 'lg']
+      .map((bpName) => mqlListeners.get(mqFor(bpName, TEST_BREAKPOINT_DATA_MULTIPLE_MATCHES)) as AnyFunction)
 
     // switch to "md" and "mdx"
     mdListener({ matches: true })
