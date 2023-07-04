@@ -4,7 +4,7 @@
 
 import breakpoints, { parseBreakpoints } from '../breakpoints'
 
-import type { BreakpointDefinitions } from '../breakpoints'
+import type { BreakpointDefinitions } from '../types'
 
 type AnyFunction = (args?: unknown) => unknown
 
@@ -29,7 +29,10 @@ const TEST_BREAKPOINT_DATA_MULTIPLE_MATCHES = {
  * @param bps  the breakpoint definitions
  * @return the media query for the breakpoint
  */
-const mqFor = (breakpoint: string, bps: BreakpointDefinitions): string => (
+const mqFor = (
+  breakpoint: string,
+  bps: BreakpointDefinitions,
+) => (
   Object.entries(bps)
     .filter(([name]) => name === breakpoint)
     .map(([, { min, max }]) => [
@@ -40,7 +43,9 @@ const mqFor = (breakpoint: string, bps: BreakpointDefinitions): string => (
       .join(' and '))
 ).reduce((prev, curr) => curr)
 
-const mockMatchMedia = (matches: (query: string) => boolean) => {
+const mockMatchMedia = (
+  matches: (query: string) => boolean,
+) => {
   const matchMediaQueries: string[] = []
   const mqlListeners: Map<string, AnyFunction> = new Map()
 

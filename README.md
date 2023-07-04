@@ -1,4 +1,4 @@
-[![NPM version][npm-image]][npm-url] [![Downloads][npm-downloads-image]][npm-url] [![star this repo][gh-stars-image]][gh-url] [![fork this repo][gh-forks-image]][gh-url] [![Build Status][gh-status-image]][gh-url] [![Coverage Status][coveralls-image]][coveralls-url]
+[![NPM version][npm-image]][npm-url] [![Downloads][npm-downloads-image]][npm-url] [![star this repo][gh-stars-image]][gh-url] [![fork this repo][gh-forks-image]][gh-url] [![CI][gh-status-image]][gh-status-url] [![Coverage Status][coveralls-image]][coveralls-url]
 
 # breakpoint-changes-rx
 
@@ -9,14 +9,14 @@ You have a responsive web site and want to handle viewport state with ease?
 Here we are. Handing viewport state with the help of RxJS.
 
 ```typescript
-import breakpoints, { parseBreakpoints } from 'breakpoint-changes-rx';
-import style from './style.scss';
+import breakpoints, { parseBreakpoints } from 'breakpoint-changes-rx'
+import style from './style.scss'
 
-const breakpointDefinitions = parseBreakpoints(style);
+const breakpointDefinitions = parseBreakpoints(style)
 
-const bps = breakpoints(breakpointDefinitions);
+const bps = breakpoints(breakpointDefinitions)
 
-console.log('current breakpoints: %o', bps.getCurrentBreakpoints());
+console.log('current breakpoints: %o', bps.getCurrentBreakpoints())
 ```
 
 ## What are the current viewports?
@@ -24,7 +24,7 @@ console.log('current breakpoints: %o', bps.getCurrentBreakpoints());
 ```typescript
 console.log(
   breakpoints.getCurrentBreakpoints(), // [ "md", "lg" } ]
-);
+)
 ```
 
 ## Install
@@ -55,22 +55,22 @@ This function initializes the breakpoint detection and returns an object contain
 
 For details about the breakpointDefinitions see [Configuration](#Configuration) section
 
-```javascript
-import breakpoints, { parseBreakpoints } from 'breakpoint-changes-rx';
-import style from './style.scss';
+```typescript
+import breakpoints, { parseBreakpoints } from 'breakpoint-changes-rx'
+import style from './style.scss'
 
-const breakpointDefinitions = parseBreakpoints(style);
+const breakpointDefinitions = parseBreakpoints(style)
 
-const bps = breakpoints(breakpointDefinitions);
+const bps = breakpoints(breakpointDefinitions)
 
-console.log('current breakpoints: %o', bps.getCurrentBreakpoints());
+console.log('current breakpoints: %o', bps.getCurrentBreakpoints())
 ```
 
 ### `breakpointsChanges$`
 
 An [observable](https://rxjs-dev.firebaseapp.com/guide/observable) that emits a value when breakpoints change. The format of these values is
 
-```javascript
+```typescript
 {
   curr: ['md'],
   prev: ['lg'],
@@ -79,10 +79,13 @@ An [observable](https://rxjs-dev.firebaseapp.com/guide/observable) that emits a 
 
 Usage example:
 
-```javascript
-bps.breakpointChanges$.subscribe(({ curr, prev }) => {
-  console.log('previous breakpoint is %o, actual breakpoint is %o', prev, curr);
-});
+```typescript
+bps.breakpointChanges$.subscribe(({
+  curr,
+  prev,
+}) => {
+  console.log('previous breakpoint is %o, actual breakpoint is %o', prev, curr)
+})
 ```
 
 Current and previous breakpoints are stored in arrays because it's possible to have multiple active breakpoints at the same time.
@@ -95,46 +98,46 @@ This is the same as [`breakpointsChanges$`](#breakpointsChanges$) except it is a
 
 Returns the current active breakpoints as an array.
 
-```javascript
-const current = bp.getCurrentBreakpoints();
+```typescript
+const current = bp.getCurrentBreakpoints()
 
-console.log('current breakpoints are %o', current); // e.g. ['lg']
+console.log('current breakpoints are %o', current) // e.g. ['lg']
 ```
 
 ### `breakpointsChange(bp)`
 
 Returns an observable that emits a `boolean` value when the given breakpoint gets entered or left.
 
-```javascript
+```typescript
 bp.breakpointsChange('md').subscribe((active) => {
-  console.log('breakpoint md %s', active ? 'entered' : 'left');
-});
+  console.log('breakpoint md %s', active ? 'entered' : 'left')
+})
 ```
 
 ### `breakpointsInRange(range)`
 
 Returns an observable that emits a `boolean` value when a range of breakpoints gets entered or left. If a change appears between the given range no value gets emitted.
 
-```javascript
+```typescript
 bp.breakpointsInRange(['sm', 'md']).subscribe((active) => {
-  console.log('range gets %s', active ? 'entered' : 'left');
-});
+  console.log('range gets %s', active ? 'entered' : 'left')
+})
 ```
 
 ### `includesBreakpoints(bps)`
 
 Returns `true` if the current breakpoints contain breakpoints which are part of the given `array`.
 
-```javascript
-console.log('this might be a mobile device %o', bp.includesBreakpoints(['sm', 'md']));
+```typescript
+console.log('this might be a mobile device %o', bp.includesBreakpoints(['sm', 'md']))
 ```
 
 ### `includesBreakpoint(bp)`
 
 Returns `true` if the given breakpoint is part of the current active breakpoints.
 
-```javascript
-console.log('breakpoint "md" is active %o', bp.includesBreakpoint('md'));
+```typescript
+console.log('breakpoint "md" is active %o', bp.includesBreakpoint('md'))
 ```
 
 ## Configuration
@@ -154,7 +157,7 @@ The used format for this example is shown here:
 
 ```json
 {
-  "sm": { "max": "767px", },
+  "sm": { "max": "767px" },
   "md": { "min": "768px", "max": "991px" },
   "lg": { "min": "992px", "max": "1199px" },
   "xl": { "min": "1200px" }
@@ -178,11 +181,11 @@ This function was created to parse breakpoint data from [exported variables of a
 }
 ```
 
-```javascript
-import { parseBreakpoints } from 'breakpoint-changes-rx';
-import style from './style.scss';
+```typescript
+import { parseBreakpoints } from 'breakpoint-changes-rx'
+import style from './style.scss'
 
-const breakpointDefinitions = parseBreakpoints(style);
+const breakpointDefinitions = parseBreakpoints(style)
 ```
 
 It filters all properties of the passed object that matches the breakpoint pattern.
@@ -207,7 +210,8 @@ MIT © 2023 [Jens Simon](https://github.com/jenssimon)
 [gh-url]: https://github.com/jenssimon/breakpoint-changes-rx
 [gh-stars-image]: https://badgen.net/github/stars/jenssimon/breakpoint-changes-rx
 [gh-forks-image]: https://badgen.net/github/forks/jenssimon/breakpoint-changes-rx
-[gh-status-image]: https://badgen.net/github/status/jenssimon/breakpoint-changes-rx
+[gh-status-image]: https://github.com/jenssimon/breakpoint-changes-rx/actions/workflows/ci.yml/badge.svg
+[gh-status-url]: https://github.com/jenssimon/breakpoint-changes-rx/actions/workflows/ci.yml
 
 [coveralls-url]: https://coveralls.io/github/jenssimon/breakpoint-changes-rx?branch=main
 [coveralls-image]: https://coveralls.io/repos/github/jenssimon/breakpoint-changes-rx/badge.svg?branch=main
