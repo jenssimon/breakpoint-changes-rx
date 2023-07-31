@@ -19,8 +19,7 @@
   "main": "dist/breakpoints.js",
   "types": "dist/breakpoints.d.ts",
   "files": [
-    "dist/breakpoints.js",
-    "dist/breakpoints.d.ts",
+    "dist/",
     "LICENSE",
     "README.md"
   ],
