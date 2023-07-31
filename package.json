@@ -69,7 +69,10 @@
     "extends": [
       "@jenssimon/base",
       "@jenssimon/typescript"
-    ]
+    ],
+    "rules": {
+      "import/no-unresolved": "off"
+    }
   },
   "jest": {
     "transform": {

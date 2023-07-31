@@ -3,12 +3,12 @@ import {
   filter, map, bufferTime, share,
 } from 'rxjs/operators'
 
-import parseBreakpoints from './parseBreakpoints'
+import parseBreakpoints from './parseBreakpoints.js'
 
-import fromBreakpointDefinitions from './fromBreakpointDefinitions'
-import breakpointHits from './breakpointHits'
+import fromBreakpointDefinitions from './fromBreakpointDefinitions.js'
+import breakpointHits from './breakpointHits.js'
 
-import type * as Types from './types'
+import type * as Types from './types.js'
 
 export type BreakpointDefinition = Types.BreakpointDefinition;
 export type BreakpointDefinitions = Types.BreakpointDefinitions;

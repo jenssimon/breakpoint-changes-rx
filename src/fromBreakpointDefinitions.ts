@@ -1,6 +1,6 @@
 import { Observable, merge } from 'rxjs'
 
-import type { BreakpointDefinition, BreakpointDefinitions } from './types'
+import type { BreakpointDefinition, BreakpointDefinitions } from './types.js'
 
 const mediaQueryFromBreakpoint = ({ min, max }: BreakpointDefinition) => [['min', min], ['max', max]]
   // filter empty

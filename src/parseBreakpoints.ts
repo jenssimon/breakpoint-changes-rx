@@ -1,7 +1,7 @@
 import type {
   BreakpointDefinitions,
   BreakpointParseConfig,
-} from './types'
+} from './types.js'
 
 const defaultParseConfig: BreakpointParseConfig = {
   regex: /^breakpoint-(\w*)-((max)|(min))$/,
