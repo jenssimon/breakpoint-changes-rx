@@ -885,9 +885,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jenssimon/eslint-config-typescript@npm:5.1.10":
-  version: 5.1.10
-  resolution: "@jenssimon/eslint-config-typescript@npm:5.1.10"
+"@jenssimon/eslint-config-typescript@npm:5.1.11":
+  version: 5.1.11
+  resolution: "@jenssimon/eslint-config-typescript@npm:5.1.11"
   dependencies:
     "@typescript-eslint/eslint-plugin": ^6.3.0
     "@typescript-eslint/parser": ^6.3.0
@@ -895,7 +895,7 @@ __metadata:
   peerDependencies:
     eslint: ^7.0.0 || ^8.0.0
     typescript: ">=4.0.0"
-  checksum: a714cf05c07cf5dfe8bdb0b8514ce1acdbab6a0a0d6988c05dcc1357d9051341702d47bfa8a383f9513f1373cadd6d789a174b1b0df128d652c2d707c422ba85
+  checksum: 0efc8fd33d89bf14ecc0a606dc2c00519315bf141cf781784e85db9b88299afeb281e52e778bf3b31223ef296981d5b67cd1ee1860b3ecf439071d14d789632d
   languageName: node
   linkType: hard
 
@@ -3004,7 +3004,7 @@ __metadata:
     "@commitlint/cli": 17.7.2
     "@commitlint/config-conventional": 17.7.0
     "@jenssimon/eslint-config-base": 7.2.6
-    "@jenssimon/eslint-config-typescript": 5.1.10
+    "@jenssimon/eslint-config-typescript": 5.1.11
     "@types/jest": 29.5.5
     commitizen: 4.3.0
     cz-conventional-changelog: 3.3.0
