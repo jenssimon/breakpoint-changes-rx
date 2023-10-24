@@ -81,7 +81,6 @@ const mockMatchMedia = (
  */
 describe('parseBreakpoints', () => {
   it.each([
-    /* eslint-disable @typescript-eslint/naming-convention */
     [
       'parses breakpoint information from a possible return value of a CSS module',
       {
@@ -168,7 +167,6 @@ describe('parseBreakpoints', () => {
         xm: { min: '500px' },
       },
     ],
-    /* eslint-enable @typescript-eslint/naming-convention */
   ])('%s', (name, sample, options, expected) => {
     expect(parseBreakpoints(sample, options)).toStrictEqual(expected)
   })
