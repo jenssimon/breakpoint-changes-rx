@@ -14,7 +14,7 @@
   },
   "include": [
     "src/**/*",
-    "**/*.cjs"
+    "commitlint.config.js"
   ],
   "exclude": [
     "node_modules",
