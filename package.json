@@ -24,7 +24,7 @@
     "README.md"
   ],
   "scripts": {
-    "lint": "eslint --ext .tsx,.ts,.mts,.cts,.jsx,.js,.mjs,.cjs ./",
+    "lint": "eslint ./",
     "build": "tsc",
     "prepublishOnly": "tsc",
     "test": "jest --coverage",
@@ -37,6 +37,8 @@
   "devDependencies": {
     "@commitlint/cli": "^19.0.0",
     "@commitlint/config-conventional": "^19.0.0",
+    "@eslint/compat": "^1.0.1",
+    "@eslint/eslintrc": "^3.0.2",
     "@jenssimon/eslint-config-base": "^7.3.1",
     "@jenssimon/eslint-config-typescript": "^5.2.2",
     "@types/jest": "^29.5.6",
@@ -56,19 +58,6 @@
   },
   "peerDependencies": {
     "rxjs": ">=6"
-  },
-  "eslintConfig": {
-    "parserOptions": {
-      "project": "./tsconfig.json"
-    },
-    "extends": [
-      "@jenssimon/base",
-      "@jenssimon/typescript"
-    ],
-    "rules": {
-      "@typescript-eslint/naming-convention": "off",
-      "import/no-unresolved": "off"
-    }
   },
   "jest": {
     "preset": "ts-jest/presets/default-esm",
