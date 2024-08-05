@@ -53,7 +53,7 @@ const mockMatchMedia = (
   const mqlListeners: Map<string, AnyFunction> = new Map()
 
   const listenerMock = jest.fn()
-  const matchMediaImpl = jest.fn().mockImplementation((query: string) => {
+  const matchMediaImpl = jest.fn<(query: string) => object>().mockImplementation((query: string) => {
     matchMediaQueries.push(query)
     return {
       matches: matches(query), // "lg" matches
