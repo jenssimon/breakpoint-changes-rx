@@ -10,7 +10,7 @@ const defaultParseConfig: BreakpointParseConfig = {
   isMin: (val) => val === 'min',
 }
 
-export default (
+const parseBreakpoints = (
   object: Record<string, unknown>,
   config?: Partial<BreakpointParseConfig>,
 ): BreakpointDefinitions => {
@@ -46,3 +46,5 @@ export default (
     {},
   )
 }
+
+export default parseBreakpoints

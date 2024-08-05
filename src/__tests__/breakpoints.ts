@@ -1,6 +1,9 @@
 /**
  * @jest-environment jsdom
  */
+import {
+  describe, expect, it, jest,
+} from '@jest/globals'
 
 import breakpoints, { parseBreakpoints } from '../breakpoints.js'
 
