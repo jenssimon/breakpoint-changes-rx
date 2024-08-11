@@ -26,15 +26,25 @@ export default [
   ...fixupConfigRules(compat.config({
     parserOptions: {
       project: './tsconfig.json',
+      ecmaVersion: 2020,
     },
     extends: [
       '@jenssimon/base',
-      '@jenssimon/typescript',
     ],
     rules: {
-      '@typescript-eslint/naming-convention': 'off',
       'import/no-unresolved': 'off',
     },
+    overrides: [
+      {
+        files: ['**/*.ts'],
+        extends: [
+          '@jenssimon/typescript',
+        ],
+        rules: {
+          '@typescript-eslint/naming-convention': 'off',
+        },
+      },
+    ],
   })),
 
   {

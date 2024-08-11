@@ -20,31 +20,31 @@ const parseBreakpoints = (
   }
   return Object.entries(object)
     .reduce<BreakpointDefinitions>(
-    (
-      obj,
-      [key, value],
-    ) => {
-      const breakpointMatch = key.match(parseConfig.regex as RegExp)
-      if (breakpointMatch && typeof value === 'string') {
-        const name = breakpointMatch[parseConfig.groupName as number]
+      (
+        obj,
+        [key, value],
+      ) => {
+        const breakpointMatch = key.match(parseConfig.regex as RegExp)
+        if (breakpointMatch && typeof value === 'string') {
+          const name = breakpointMatch[parseConfig.groupName as number]
 
-        let breakpoint = obj[name]
-        if (!breakpoint) {
-          breakpoint = {}
-          obj[name] = breakpoint
+          let breakpoint = obj[name]
+          if (!breakpoint) {
+            breakpoint = {}
+            obj[name] = breakpoint
+          }
+
+          breakpoint[
+            parseConfig.isMin(breakpointMatch[parseConfig.groupMinMax as number])
+              ? 'min'
+              : 'max'
+          ] = value as string
         }
 
-        breakpoint[
-          parseConfig.isMin(breakpointMatch[parseConfig.groupMinMax as number])
-            ? 'min'
-            : 'max'
-        ] = value as string
-      }
-
-      return obj
-    },
-    {},
-  )
+        return obj
+      },
+      {},
+    )
 }
 
 export default parseBreakpoints
