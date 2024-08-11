@@ -8,11 +8,11 @@ import parseBreakpoints from './parseBreakpoints.js'
 import fromBreakpointDefinitions from './fromBreakpointDefinitions.js'
 import breakpointHits from './breakpointHits.js'
 
-import type * as Types from './types.js'
+import type * as types from './types.js'
 
-export type BreakpointDefinition = Types.BreakpointDefinition;
-export type BreakpointDefinitions = Types.BreakpointDefinitions;
-export type BreakpointParseConfig = Types.BreakpointParseConfig;
+export type BreakpointDefinition = types.BreakpointDefinition;
+export type BreakpointDefinitions = types.BreakpointDefinitions;
+export type BreakpointParseConfig = types.BreakpointParseConfig;
 
 const breakpoints = <
   T extends BreakpointDefinitions,
