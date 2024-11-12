@@ -196,6 +196,7 @@ describe('initialization and detect breakpoints on init', () => {
 
     const bpSubscriber = jest.fn()
     bp.breakpointsChanges$.subscribe(bpSubscriber)
+
     expect(bpSubscriber).toHaveBeenCalledTimes(0)
 
     const bpBehaviorSubscriber = jest.fn()
@@ -228,14 +229,17 @@ describe('initialization and detect breakpoints on init', () => {
       .includes(query)) // "md" and "mdx" matches
 
     const bp = breakpoints(TEST_BREAKPOINT_DATA_MULTIPLE_MATCHES)
+
     expect(matchMediaImpl).toHaveBeenCalledTimes(6) // 6 breakpoints -> 6 matchMedia calls
 
     const bpSubscriber = jest.fn()
     bp.breakpointsChanges$.subscribe(bpSubscriber)
+
     expect(bpSubscriber).toHaveBeenCalledTimes(0)
 
     const bpBehaviorSubscriber = jest.fn()
     bp.breakpointsChangesBehavior$.subscribe(bpBehaviorSubscriber)
+
     expect(bpBehaviorSubscriber).toHaveBeenCalledTimes(1)
     expect(bpBehaviorSubscriber.mock.calls[0][0]).toStrictEqual({ curr: ['md', 'mdx'], prev: [] });
 
@@ -273,6 +277,7 @@ describe('initialization and detect breakpoints on init', () => {
     const bp = breakpoints({
       md: { min: 768, max: 991 },
     })
+
     expect(matchMediaImpl).toHaveBeenCalledTimes(1) // 1 breakpoints -> 1 matchMedia calls
 
     // are the correct media queries used?
