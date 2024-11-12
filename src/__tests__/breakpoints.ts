@@ -66,7 +66,7 @@ const mockMatchMedia = (
     }
   })
 
-  Object.defineProperty(window, 'matchMedia', {
+  Object.defineProperty(globalThis, 'matchMedia', {
     writable: true,
     value: matchMediaImpl,
   })
