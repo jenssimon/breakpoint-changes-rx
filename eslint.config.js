@@ -33,6 +33,7 @@ export default [
     ],
     rules: {
       'import/no-unresolved': 'off',
+      'unicorn/expiring-todo-comments': 'off',
     },
     overrides: [
       {
@@ -42,6 +43,7 @@ export default [
         ],
         rules: {
           '@typescript-eslint/naming-convention': 'off',
+          '@typescript-eslint/no-unused-expressions': 'off',
         },
       },
     ],
