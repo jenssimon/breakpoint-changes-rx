@@ -44,7 +44,7 @@ const mqFor = (
       .filter(([, val]) => val)
       .map(([str, val]) => `(${str}-width: ${val})`)
       .join(' and '))
-).reduce((prev, curr) => curr)
+).reduce((prev, curr) => curr, '')
 
 const mockMatchMedia = (
   matches: (query: string) => boolean,
@@ -262,7 +262,6 @@ describe('initialization and detect breakpoints on init', () => {
       ['sm', 'md'], ['md', 'mdx'], ['md', 'mdy'], ['md', 'lg'], ['mdx', 'mdy'], ['mdy', 'lg'], ['lg', 'xl'],
     ].forEach((bpNames: string[]) => {
       expect(bp.includesBreakpoints(bpNames as 'md'[])).toBe(
-        // eslint-disable-next-line jest/no-conditional-in-test
         bpNames.includes('md')
         || bpNames.includes('mdx'),
       )

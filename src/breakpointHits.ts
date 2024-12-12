@@ -12,6 +12,7 @@ const breakpointHits = <K>(initialBreakpoints: K[]) => scan((
 ) => {
   const curr = [...prev] // add previous breakpoint but without the removed ones
   actual.forEach(({ matches, name }) => {
+    // eslint-disable-next-line sonarjs/no-selector-parameter
     if (!matches) {
       const idx = curr.indexOf(name)
       /* istanbul ignore else */
