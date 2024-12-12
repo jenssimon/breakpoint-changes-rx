@@ -45,7 +45,7 @@
     "@types/jest": "^29.5.6",
     "commitizen": "^4.3.0",
     "cz-conventional-changelog": "^3.3.0",
-    "eslint": "^9.0.0",
+    "eslint": "^8.52.0",
     "husky": "^9.0.0",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",

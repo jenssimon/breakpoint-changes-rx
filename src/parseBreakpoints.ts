@@ -24,7 +24,7 @@ const parseBreakpoints = (
         obj,
         [key, value],
       ) => {
-        const breakpointMatch = key.match(parseConfig.regex as RegExp)
+        const breakpointMatch = new RegExp(parseConfig.regex as RegExp).exec(key)
         if (breakpointMatch && typeof value === 'string') {
           const name = breakpointMatch[parseConfig.groupName as number]
 
