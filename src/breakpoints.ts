@@ -14,6 +14,7 @@ export type BreakpointDefinition = types.BreakpointDefinition;
 export type BreakpointDefinitions = types.BreakpointDefinitions;
 export type BreakpointParseConfig = types.BreakpointParseConfig;
 
+
 const breakpoints = <
   T extends BreakpointDefinitions,
   K extends keyof T,
@@ -72,12 +73,14 @@ const breakpoints = <
     breakpointsChanges$,
     breakpointsChangesBehavior$,
 
+
     /**
      * Returns the current breakpoint names.
      *
      * @returns the current breakpoint names
      */
     getCurrentBreakpoints,
+
 
     /**
      * Returns true if the current breakpoints contain breakpoints which are part of the given array.
@@ -91,6 +94,7 @@ const breakpoints = <
       bps,
     ),
 
+
     /**
      * Returns `true` if the given breakpoint is part of the current active breakpoints.
      *
@@ -100,6 +104,7 @@ const breakpoints = <
     includesBreakpoint: (
       bp: K,
     ) => includesBreakpoints([bp]),
+
 
     /**
      * Create an observable emitting values for entering or leaving a breakpoint.
@@ -123,6 +128,7 @@ const breakpoints = <
 
       map(({ curr }) => curr.includes(bp)),
     ),
+
 
     /**
      * Create an observable emitting values for entering or leaving a breakpoint range

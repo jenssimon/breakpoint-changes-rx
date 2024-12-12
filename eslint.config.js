@@ -46,6 +46,20 @@ export default [
           '@typescript-eslint/no-unused-expressions': 'off',
         },
       },
+      {
+        files: [
+          '**/*.test.*',
+          '**/*.spec.*',
+          '**/__tests__/**',
+          '**/__mocks__/**',
+        ],
+        plugins: [
+          '@vitest',
+        ],
+        extends: [
+          'plugin:@vitest/legacy-recommended',
+        ],
+      },
     ],
   })),
 

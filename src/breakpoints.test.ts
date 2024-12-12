@@ -1,13 +1,12 @@
-/**
- * @jest-environment jsdom
- */
 import {
-  describe, expect, it, jest,
-} from '@jest/globals'
+  vi,
+  describe, expect, it,
+} from 'vitest'
 
-import breakpoints, { parseBreakpoints } from '../breakpoints.js'
+import breakpoints, { parseBreakpoints } from './breakpoints.js'
 
-import type { BreakpointDefinitions } from '../types.js'
+import type { BreakpointDefinitions } from './types.js'
+
 
 type AnyFunction = (args?: unknown) => unknown
 
@@ -24,6 +23,7 @@ const TEST_BREAKPOINT_DATA_MULTIPLE_MATCHES = {
   mdx: { min: '768px', max: '849px' },
   mdy: { min: '850px', max: '991px' },
 }
+
 
 /**
  * Generates a media query for a breakpoint.
@@ -46,14 +46,15 @@ const mqFor = (
       .join(' and '))
 ).reduce((prev, curr) => curr, '')
 
+
 const mockMatchMedia = (
   matches: (query: string) => boolean,
 ) => {
   const matchMediaQueries: string[] = []
   const mqlListeners: Map<string, AnyFunction> = new Map()
 
-  const listenerMock = jest.fn()
-  const matchMediaImpl = jest.fn<(query: string) => object>().mockImplementation((query: string) => {
+  const listenerMock = vi.fn()
+  const matchMediaImpl = vi.fn().mockImplementation((query: string) => {
     matchMediaQueries.push(query)
     return {
       matches: matches(query), // "lg" matches
@@ -78,6 +79,7 @@ const mockMatchMedia = (
     mqlListeners,
   }
 }
+
 
 /*
  * parseBreakpoints()
@@ -175,6 +177,7 @@ describe('parseBreakpoints', () => {
   })
 })
 
+
 describe('initialization and detect breakpoints on init', () => {
   it('initializes with one detected breakpoint', () => {
     const {
@@ -194,12 +197,12 @@ describe('initialization and detect breakpoints on init', () => {
 
     expect(bp.getCurrentBreakpoints()).toStrictEqual(['lg'])
 
-    const bpSubscriber = jest.fn()
+    const bpSubscriber = vi.fn()
     bp.breakpointsChanges$.subscribe(bpSubscriber)
 
     expect(bpSubscriber).toHaveBeenCalledTimes(0)
 
-    const bpBehaviorSubscriber = jest.fn()
+    const bpBehaviorSubscriber = vi.fn()
     bp.breakpointsChangesBehavior$.subscribe(bpBehaviorSubscriber)
 
     expect(bpBehaviorSubscriber).toHaveBeenCalledTimes(1)
@@ -221,6 +224,7 @@ describe('initialization and detect breakpoints on init', () => {
     })
   })
 
+
   it('initializes with multiple detected breakpoints', () => {
     const {
       matchMediaQueries, listenerMock, matchMediaImpl,
@@ -232,12 +236,12 @@ describe('initialization and detect breakpoints on init', () => {
 
     expect(matchMediaImpl).toHaveBeenCalledTimes(6) // 6 breakpoints -> 6 matchMedia calls
 
-    const bpSubscriber = jest.fn()
+    const bpSubscriber = vi.fn()
     bp.breakpointsChanges$.subscribe(bpSubscriber)
 
     expect(bpSubscriber).toHaveBeenCalledTimes(0)
 
-    const bpBehaviorSubscriber = jest.fn()
+    const bpBehaviorSubscriber = vi.fn()
     bp.breakpointsChangesBehavior$.subscribe(bpBehaviorSubscriber)
 
     expect(bpBehaviorSubscriber).toHaveBeenCalledTimes(1)
@@ -268,6 +272,7 @@ describe('initialization and detect breakpoints on init', () => {
     })
   })
 
+
   it('initializes with number values for a breakpoint', () => {
     const {
       matchMediaQueries, listenerMock, matchMediaImpl,
@@ -288,10 +293,11 @@ describe('initialization and detect breakpoints on init', () => {
   })
 })
 
+
 describe('detect breakpoint changes', () => {
   it('detects breakpoint change (single breakpoint scenario)', () => {
     const bpData = TEST_BREAKPOINT_DATA
-    jest.useFakeTimers()
+    vi.useFakeTimers()
     const { mqlListeners } = mockMatchMedia((query) => [
       mqFor('lg', bpData), // initial match "lg"
     ].includes(query))
@@ -300,17 +306,17 @@ describe('detect breakpoint changes', () => {
 
     expect(bp.getCurrentBreakpoints()).toStrictEqual(['lg'])
 
-    const breakpointChangesObservable = jest.fn()
+    const breakpointChangesObservable = vi.fn()
     bp.breakpointsChanges$.subscribe(breakpointChangesObservable)
 
     const [smObservable, mdObservable, lgObservable] = ['sm', 'md', 'lg']
       .map((bpName) => {
-        const mock = jest.fn()
+        const mock = vi.fn()
         bp.breakpointsChange(bpName as 'sm').subscribe(mock)
         return mock
       })
 
-    const breakpointRangeObservable = jest.fn()
+    const breakpointRangeObservable = vi.fn()
     bp.breakpointsInRange(['sm', 'md']).subscribe(breakpointRangeObservable)
 
     const [smListener, mdListener, lgListener] = ['sm', 'md', 'lg']
@@ -319,7 +325,7 @@ describe('detect breakpoint changes', () => {
     // change to "md"
     mdListener({ matches: true })
     lgListener({ matches: false })
-    jest.runOnlyPendingTimers()
+    vi.runOnlyPendingTimers()
 
     expect(breakpointChangesObservable).toHaveBeenCalledTimes(1)
     expect(breakpointChangesObservable.mock.calls[0][0]).toStrictEqual({ curr: ['md'], prev: ['lg'] })
@@ -336,7 +342,7 @@ describe('detect breakpoint changes', () => {
     // change to "sm"
     mdListener({ matches: false })
     smListener({ matches: true })
-    jest.runOnlyPendingTimers()
+    vi.runOnlyPendingTimers()
 
     expect(breakpointChangesObservable).toHaveBeenCalledTimes(2)
     expect(breakpointChangesObservable.mock.calls[1][0]).toStrictEqual({ curr: ['sm'], prev: ['md'] })
@@ -354,7 +360,7 @@ describe('detect breakpoint changes', () => {
     // change to "lg"
     smListener({ matches: false })
     lgListener({ matches: true })
-    jest.runOnlyPendingTimers()
+    vi.runOnlyPendingTimers()
 
     expect(breakpointChangesObservable).toHaveBeenCalledTimes(3)
     expect(breakpointChangesObservable.mock.calls[2][0]).toStrictEqual({ curr: ['lg'], prev: ['sm'] })
@@ -371,8 +377,9 @@ describe('detect breakpoint changes', () => {
     expect(breakpointRangeObservable.mock.calls[1][0]).toBe(false)
   })
 
+
   it('detects breakpoint change (multiple breakpoint scenario)', () => {
-    jest.useFakeTimers()
+    vi.useFakeTimers()
 
     const { mqlListeners } = mockMatchMedia((query) => [
       mqFor('lg', TEST_BREAKPOINT_DATA_MULTIPLE_MATCHES), // initial match "lg"
@@ -380,17 +387,17 @@ describe('detect breakpoint changes', () => {
 
     const bp = breakpoints(TEST_BREAKPOINT_DATA_MULTIPLE_MATCHES)
 
-    const breakpointChangesObservable = jest.fn()
+    const breakpointChangesObservable = vi.fn()
     bp.breakpointsChanges$.subscribe(breakpointChangesObservable)
 
     const [mdObservable, mdxObservable, mdyObservable, lgObservable] = ['md', 'mdx', 'mdy', 'lg']
       .map((bpName) => {
-        const mock = jest.fn()
+        const mock = vi.fn()
         bp.breakpointsChange(bpName as 'sm').subscribe(mock)
         return mock
       })
 
-    const breakpointRangeObservable = jest.fn()
+    const breakpointRangeObservable = vi.fn()
     bp.breakpointsInRange(['sm', 'md']).subscribe(breakpointRangeObservable)
 
     const [mdListener, mdxListener, mdyListener, lgListener] = ['md', 'mdx', 'mdy', 'lg']
@@ -400,7 +407,7 @@ describe('detect breakpoint changes', () => {
     mdListener({ matches: true })
     mdxListener({ matches: true })
     lgListener({ matches: false })
-    jest.runOnlyPendingTimers()
+    vi.runOnlyPendingTimers()
 
     expect(breakpointChangesObservable).toHaveBeenCalledTimes(1)
     expect(breakpointChangesObservable.mock.calls[0][0]).toStrictEqual({ curr: ['md', 'mdx'], prev: ['lg'] })
@@ -422,7 +429,7 @@ describe('detect breakpoint changes', () => {
     // switch to "md" and "mdy"
     mdxListener({ matches: false })
     mdyListener({ matches: true })
-    jest.runOnlyPendingTimers()
+    vi.runOnlyPendingTimers()
 
     expect(breakpointChangesObservable).toHaveBeenCalledTimes(2)
     expect(breakpointChangesObservable.mock.calls[1][0]).toStrictEqual({ curr: ['md', 'mdy'], prev: ['md', 'mdx'] })
@@ -443,7 +450,7 @@ describe('detect breakpoint changes', () => {
     mdListener({ matches: false })
     mdyListener({ matches: false })
     lgListener({ matches: true })
-    jest.runOnlyPendingTimers()
+    vi.runOnlyPendingTimers()
 
     expect(breakpointChangesObservable).toHaveBeenCalledTimes(3)
     expect(breakpointChangesObservable.mock.calls[2][0]).toStrictEqual({ curr: ['lg'], prev: ['md', 'mdy'] })
