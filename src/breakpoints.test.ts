@@ -8,7 +8,7 @@ import breakpoints, { parseBreakpoints } from './breakpoints.js'
 import type { BreakpointDefinitions } from './types.js'
 
 
-type AnyFunction = (args?: unknown) => unknown
+type AnyFunction = (arguments_?: unknown) => unknown
 
 const TEST_BREAKPOINT_DATA = {
   sm: { max: '767px' },
@@ -41,10 +41,11 @@ const mqFor = (
     .map(([, { min, max }]) => [
       ['min', min], ['max', max],
     ]
-      .filter(([, val]) => val)
-      .map(([str, val]) => `(${str}-width: ${val})`)
+      .filter(([, value]) => value)
+      .map(([string_, value]) => `(${string_}-width: ${value})`)
       .join(' and '))
-).reduce((prev, curr) => curr, '')
+// eslint-disable-next-line unicorn/no-array-reduce
+).reduce((previous, current) => current, '')
 
 
 const mockMatchMedia = (
@@ -59,7 +60,7 @@ const mockMatchMedia = (
     return {
       matches: matches(query), // "lg" matches
       media: query,
-      onchange: null,
+      onchange: undefined,
       addEventListener: (event: string, fnc: AnyFunction): void => {
         mqlListeners.set(query, fnc)
         listenerMock(event, fnc)
@@ -186,12 +187,12 @@ describe('initialization and detect breakpoints on init', () => {
 
     const bp = breakpoints(TEST_BREAKPOINT_DATA as BreakpointDefinitions)
 
-    expect(matchMediaImpl).toHaveBeenCalledTimes(4); // 4 breakpoints -> 4 matchMedia calls
+    expect(matchMediaImpl).toHaveBeenCalledTimes(4) // 4 breakpoints -> 4 matchMedia calls
 
     // are the correct media queries used?
-    (['sm', 'md', 'lg', 'xl']).forEach((bpName: string) => {
+    for (const bpName of ['sm', 'md', 'lg', 'xl']) {
       expect(matchMediaQueries).toContain(mqFor(bpName, TEST_BREAKPOINT_DATA))
-    })
+    }
 
     expect(listenerMock).toHaveBeenCalledTimes(4) // listeners for all media queries added?
 
@@ -208,20 +209,20 @@ describe('initialization and detect breakpoints on init', () => {
     expect(bpBehaviorSubscriber).toHaveBeenCalledTimes(1)
     expect(bpBehaviorSubscriber.mock.calls[0][0]).toStrictEqual({
       curr: ['lg'], prev: [],
-    });
+    })
 
     // includesBreakpoint()
-    ['sm', 'md', 'lg', 'xl', 'foo'].forEach((bpName: string) => {
+    for (const bpName of ['sm', 'md', 'lg', 'xl', 'foo']) {
       expect(bp.includesBreakpoint(bpName)).toBe(bpName === 'lg')
-    });
+    }
 
     // includesBreakpoints()
-    [
+    for (const bpNames of [
       ['sm'], ['md'], ['lg'], ['xl'], ['foo'],
       ['sm', 'md'], ['lg', 'xl'],
-    ].forEach((bpNames: string[]) => {
+    ]) {
       expect(bp.includesBreakpoints(bpNames)).toBe(bpNames.includes('lg'))
-    })
+    }
   })
 
 
@@ -245,31 +246,31 @@ describe('initialization and detect breakpoints on init', () => {
     bp.breakpointsChangesBehavior$.subscribe(bpBehaviorSubscriber)
 
     expect(bpBehaviorSubscriber).toHaveBeenCalledTimes(1)
-    expect(bpBehaviorSubscriber.mock.calls[0][0]).toStrictEqual({ curr: ['md', 'mdx'], prev: [] });
+    expect(bpBehaviorSubscriber.mock.calls[0][0]).toStrictEqual({ curr: ['md', 'mdx'], prev: [] })
 
-    ['sm', 'md', 'mdx', 'mdy', 'lg', 'xl'].forEach((bpName: string) => {
+    for (const bpName of ['sm', 'md', 'mdx', 'mdy', 'lg', 'xl']) {
       expect(matchMediaQueries).toContain(mqFor(bpName, TEST_BREAKPOINT_DATA_MULTIPLE_MATCHES))
-    })
+    }
 
     expect(listenerMock).toHaveBeenCalledTimes(6)
 
-    expect(bp.getCurrentBreakpoints()).toStrictEqual(['md', 'mdx']);
+    expect(bp.getCurrentBreakpoints()).toStrictEqual(['md', 'mdx'])
 
     // includesBreakpoint()
-    ['sm', 'md', 'mdx', 'mdy', 'lg', 'xl', 'foo'].forEach((bpName) => {
+    for (const bpName of ['sm', 'md', 'mdx', 'mdy', 'lg', 'xl', 'foo']) {
       expect(bp.includesBreakpoint(bpName as 'sm')).toBe(['md', 'mdx'].includes(bpName))
-    });
+    }
 
     // includesBreakpoints()
-    [
+    for (const bpNames of [
       ['sm'], ['md'], ['mdx'], ['mdy'], ['lg'], ['xl'], ['foo'],
       ['sm', 'md'], ['md', 'mdx'], ['md', 'mdy'], ['md', 'lg'], ['mdx', 'mdy'], ['mdy', 'lg'], ['lg', 'xl'],
-    ].forEach((bpNames: string[]) => {
+    ]) {
       expect(bp.includesBreakpoints(bpNames as 'md'[])).toBe(
         bpNames.includes('md')
         || bpNames.includes('mdx'),
       )
-    })
+    }
   })
 
 

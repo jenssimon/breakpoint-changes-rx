@@ -3,10 +3,9 @@ import {
   filter, map, bufferTime, share,
 } from 'rxjs/operators'
 
-import parseBreakpoints from './parseBreakpoints.js'
 
-import fromBreakpointDefinitions from './fromBreakpointDefinitions.js'
-import breakpointHits from './breakpointHits.js'
+import fromBreakpointDefinitions from './from-breakpoint-definitions.js'
+import breakpointHits from './breakpoint-hits.js'
 
 import type * as types from './types.js'
 
@@ -163,6 +162,6 @@ const breakpoints = <
   }
 }
 
-export default breakpoints
 
-export { parseBreakpoints }
+export default breakpoints
+export { default as parseBreakpoints } from './parse-breakpoints.js'

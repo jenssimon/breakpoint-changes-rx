@@ -33,6 +33,7 @@ export default [
     ],
     rules: {
       'import/no-unresolved': 'off',
+      'no-restricted-syntax': 'off',
       'unicorn/expiring-todo-comments': 'off',
     },
     overrides: [
