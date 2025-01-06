@@ -4,12 +4,12 @@ import type { BreakpointDefinition, BreakpointDefinitions } from './types.js'
 
 const mediaQueryFromBreakpoint = ({ min, max }: BreakpointDefinition) => [['min', min], ['max', max]]
   // filter empty
-  .filter(([, val]) => val)
+  .filter(([, value]) => value)
 
-  .map(([str, val]) => `(${str}-width: ${
-    typeof val === 'string'
-      ? val
-      : `${String(val)}px`
+  .map(([string_, value]) => `(${string_}-width: ${
+    typeof value === 'string'
+      ? value
+      : `${String(value)}px`
   })`)
 
   .join(' and ')

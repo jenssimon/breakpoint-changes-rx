@@ -7,7 +7,7 @@ const defaultParseConfig: BreakpointParseConfig = {
   regex: /^breakpoint-(\w*)-((max)|(min))$/,
   groupName: 1,
   groupMinMax: 2,
-  isMin: (val) => val === 'min',
+  isMin: (value) => value === 'min',
 }
 
 const parseBreakpoints = (
@@ -19,19 +19,20 @@ const parseBreakpoints = (
     ...config,
   }
   return Object.entries(object)
+    // eslint-disable-next-line unicorn/no-array-reduce
     .reduce<BreakpointDefinitions>(
       (
-        obj,
+        object_,
         [key, value],
       ) => {
         const breakpointMatch = new RegExp(parseConfig.regex as RegExp).exec(key)
         if (breakpointMatch && typeof value === 'string') {
           const name = breakpointMatch[parseConfig.groupName as number]
 
-          let breakpoint = obj[name]
+          let breakpoint = object_[name]
           if (!breakpoint) {
             breakpoint = {}
-            obj[name] = breakpoint
+            object_[name] = breakpoint
           }
 
           breakpoint[
@@ -41,7 +42,7 @@ const parseBreakpoints = (
           ] = value as string
         }
 
-        return obj
+        return object_
       },
       {},
     )
