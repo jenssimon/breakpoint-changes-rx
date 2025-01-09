@@ -29,7 +29,6 @@
     "prepublishOnly": "tsc",
     "test": "vitest --coverage",
     "commit": "cz",
-    "postinstall": "husky",
     "prepack": "pinst --disable",
     "postpack": "pinst --enable",
     "semantic-release": "semantic-release"
