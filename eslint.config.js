@@ -1,6 +1,8 @@
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
+import vitest from '@vitest/eslint-plugin'
+
 import { FlatCompat } from '@eslint/eslintrc'
 import { fixupConfigRules } from '@eslint/compat'
 
@@ -47,22 +49,23 @@ export default [
           '@typescript-eslint/no-unused-expressions': 'off',
         },
       },
-      {
-        files: [
-          '**/*.test.*',
-          '**/*.spec.*',
-          '**/__tests__/**',
-          '**/__mocks__/**',
-        ],
-        plugins: [
-          '@vitest',
-        ],
-        extends: [
-          'plugin:@vitest/legacy-recommended',
-        ],
-      },
     ],
   })),
+
+  {
+    files: [
+      '**/*.test.*',
+      '**/*.spec.*',
+      '**/__tests__/**',
+      '**/__mocks__/**',
+    ],
+    plugins: {
+      vitest,
+    },
+    rules: {
+      ...vitest.configs.recommended.rules,
+    },
+  },
 
   {
     files: ['eslint.config.js'],
