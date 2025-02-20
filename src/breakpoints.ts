@@ -17,9 +17,7 @@ export type BreakpointParseConfig = types.BreakpointParseConfig;
 const breakpoints = <
   T extends BreakpointDefinitions,
   K extends keyof T,
->(
-  breakpointDefinitions: T,
-) => {
+>(breakpointDefinitions: T) => {
   const initialBreakpoints: K[] = []
 
   const breakpointsChanges$ = fromBreakpointDefinitions(
@@ -46,7 +44,7 @@ const breakpoints = <
         bps = curr
       },
     })
-    return bps as K[]
+    return bps
   }
 
   const breakpointListContainsBreakpoint = (

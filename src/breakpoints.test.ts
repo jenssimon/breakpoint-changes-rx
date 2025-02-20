@@ -52,7 +52,7 @@ const mockMatchMedia = (
   matches: (query: string) => boolean,
 ) => {
   const matchMediaQueries: string[] = []
-  const mqlListeners: Map<string, AnyFunction> = new Map()
+  const mqlListeners = new Map<string, AnyFunction>()
 
   const listenerMock = vi.fn()
   const matchMediaImpl = vi.fn().mockImplementation((query: string) => {
@@ -321,7 +321,7 @@ describe('detect breakpoint changes', () => {
     bp.breakpointsInRange(['sm', 'md']).subscribe(breakpointRangeObservable)
 
     const [smListener, mdListener, lgListener] = ['sm', 'md', 'lg']
-      .map((bpName) => mqlListeners.get(mqFor(bpName, bpData)) as AnyFunction)
+      .map((bpName) => mqlListeners.get(mqFor(bpName, bpData))!)
 
     // change to "md"
     mdListener({ matches: true })
@@ -402,7 +402,7 @@ describe('detect breakpoint changes', () => {
     bp.breakpointsInRange(['sm', 'md']).subscribe(breakpointRangeObservable)
 
     const [mdListener, mdxListener, mdyListener, lgListener] = ['md', 'mdx', 'mdy', 'lg']
-      .map((bpName) => mqlListeners.get(mqFor(bpName, TEST_BREAKPOINT_DATA_MULTIPLE_MATCHES)) as AnyFunction)
+      .map((bpName) => mqlListeners.get(mqFor(bpName, TEST_BREAKPOINT_DATA_MULTIPLE_MATCHES))!)
 
     // switch to "md" and "mdx"
     mdListener({ matches: true })

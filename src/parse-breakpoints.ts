@@ -25,9 +25,9 @@ const parseBreakpoints = (
         object_,
         [key, value],
       ) => {
-        const breakpointMatch = new RegExp(parseConfig.regex as RegExp).exec(key)
+        const breakpointMatch = new RegExp(parseConfig.regex!).exec(key)
         if (breakpointMatch && typeof value === 'string') {
-          const name = breakpointMatch[parseConfig.groupName as number]
+          const name = breakpointMatch[parseConfig.groupName!]
 
           let breakpoint = object_[name]
           if (!breakpoint) {
@@ -36,10 +36,10 @@ const parseBreakpoints = (
           }
 
           breakpoint[
-            parseConfig.isMin(breakpointMatch[parseConfig.groupMinMax as number])
+            parseConfig.isMin(breakpointMatch[parseConfig.groupMinMax!])
               ? 'min'
               : 'max'
-          ] = value as string
+          ] = value
         }
 
         return object_

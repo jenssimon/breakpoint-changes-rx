@@ -1,6 +1,7 @@
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
+import tseslint from 'typescript-eslint'
 import vitest from '@vitest/eslint-plugin'
 
 import { FlatCompat } from '@eslint/eslintrc'
@@ -16,7 +17,7 @@ const compat = new FlatCompat({
 })
 
 
-export default [
+export default tseslint.config(
   {
     ignores: [
       '.yarn/',
@@ -25,32 +26,30 @@ export default [
     ],
   },
 
-  ...fixupConfigRules(compat.config({
-    parserOptions: {
-      project: './tsconfig.json',
-      ecmaVersion: 2020,
-    },
+  fixupConfigRules(compat.config({
     extends: [
       '@jenssimon/base',
     ],
     rules: {
-      'import/no-unresolved': 'off',
       'no-restricted-syntax': 'off',
       'unicorn/expiring-todo-comments': 'off',
     },
-    overrides: [
-      {
-        files: ['**/*.ts'],
-        extends: [
-          '@jenssimon/typescript',
-        ],
-        rules: {
-          '@typescript-eslint/naming-convention': 'off',
-          '@typescript-eslint/no-unused-expressions': 'off',
-        },
-      },
-    ],
   })),
+
+  tseslint.configs.recommendedTypeChecked,
+  tseslint.configs.stylisticTypeChecked,
+  {
+    languageOptions: {
+      parserOptions: {
+        projectService: {
+          allowDefaultProject: [
+            '*.js',
+          ],
+        },
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
+  },
 
   {
     files: [
@@ -73,4 +72,4 @@ export default [
       'no-underscore-dangle': 'off',
     },
   },
-]
+)
