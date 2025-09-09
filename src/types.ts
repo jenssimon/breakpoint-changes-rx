@@ -4,7 +4,7 @@ export interface BreakpointDefinition {
 }
 
 
-export type BreakpointDefinitions = Record<string, BreakpointDefinition>;
+export type BreakpointDefinitions = Record<string, BreakpointDefinition>
 
 
 export interface BreakpointParseConfig {

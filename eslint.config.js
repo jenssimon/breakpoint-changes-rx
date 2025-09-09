@@ -1,21 +1,7 @@
-import path from 'node:path'
-import { fileURLToPath } from 'node:url'
-
 import { defineConfig } from 'eslint/config'
+import { configs } from '@jenssimon/eslint-config-base'
 import tseslint from 'typescript-eslint'
 import vitest from '@vitest/eslint-plugin'
-
-import { FlatCompat } from '@eslint/eslintrc'
-import { fixupConfigRules } from '@eslint/compat'
-
-
-// mimic CommonJS variables -- not needed if using CommonJS
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
-
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-})
 
 
 export default defineConfig(
@@ -27,15 +13,7 @@ export default defineConfig(
     ],
   },
 
-  fixupConfigRules(compat.config({
-    extends: [
-      '@jenssimon/base',
-    ],
-    rules: {
-      'no-restricted-syntax': 'off',
-      'unicorn/expiring-todo-comments': 'off',
-    },
-  })),
+  configs.base,
 
   tseslint.configs.recommendedTypeChecked,
   tseslint.configs.stylisticTypeChecked,
@@ -53,6 +31,12 @@ export default defineConfig(
   },
 
   {
+    rules: {
+      'no-restricted-syntax': 'off',
+    },
+  },
+
+  {
     files: [
       '**/*.test.*',
       '**/*.spec.*',
@@ -64,13 +48,6 @@ export default defineConfig(
     },
     rules: {
       ...vitest.configs.recommended.rules,
-    },
-  },
-
-  {
-    files: ['eslint.config.js'],
-    rules: {
-      'no-underscore-dangle': 'off',
     },
   },
 )
