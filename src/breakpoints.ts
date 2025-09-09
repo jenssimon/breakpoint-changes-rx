@@ -9,14 +9,14 @@ import breakpointHits from './breakpoint-hits.js'
 
 import type * as types from './types.js'
 
-export type BreakpointDefinition = types.BreakpointDefinition;
-export type BreakpointDefinitions = types.BreakpointDefinitions;
-export type BreakpointParseConfig = types.BreakpointParseConfig;
+export type BreakpointDefinition = types.BreakpointDefinition
+export type BreakpointDefinitions = types.BreakpointDefinitions
+export type BreakpointParseConfig = types.BreakpointParseConfig
 
 
 const breakpoints = <
   T extends BreakpointDefinitions,
-  K extends keyof T,
+  K extends keyof T
 >(breakpointDefinitions: T) => {
   const initialBreakpoints: K[] = []
 

@@ -23,9 +23,9 @@ const fromBreakpointDefinitions = <K>(
         name,
         breakpoint,
       ]): Observable<{
-      name: K
-      matches: boolean
-    }> => {
+        name: K
+        matches: boolean
+      }> => {
         const mediaQueryList = matchMedia(
           mediaQueryFromBreakpoint(breakpoint),
         )
