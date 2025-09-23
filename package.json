@@ -55,7 +55,7 @@
   "peerDependencies": {
     "rxjs": ">=6"
   },
-  "packageManager": "yarn@4.10.0",
+  "packageManager": "yarn@4.10.3",
   "config": {
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
