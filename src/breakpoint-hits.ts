@@ -7,8 +7,8 @@ const breakpointHits = <K>(initialBreakpoints: K[]) => scan((
     curr: previous,
   },
   actual: {
-    name: K
-    matches: boolean
+    name: K,
+    matches: boolean,
   }[],
 ) => {
   const current = [...previous] // add previous breakpoint but without the removed ones
