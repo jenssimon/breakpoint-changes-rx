@@ -1,4 +1,4 @@
-import { BehaviorSubject } from 'rxjs'
+import { BehaviorSubject, Observable } from 'rxjs'
 import {
   filter, map, bufferTime, share,
 } from 'rxjs/operators'
@@ -50,13 +50,13 @@ const breakpoints = <
   const breakpointListContainsBreakpoint = (
     bpl: K[],
     bp: K,
-  ) => bpl.includes(bp)
+  ) => (bpl as any).includes(bp)
 
   const breakpointListContainsBreakpoints = (
     bpl: K[],
     bps: K[],
   ) => bps.some(
-    (bp) => bpl.includes(bp),
+    (bp) => (bpl as any).includes(bp),
   )
 
   const includesBreakpoints = (
@@ -121,9 +121,9 @@ const breakpoints = <
       filter(({
         curr,
         prev,
-      }) => curr.includes(bp) !== prev.includes(bp)),
+      }) => (curr as any).includes(bp) !== (prev as any).includes(bp)),
 
-      map(({ curr }) => curr.includes(bp)),
+      map(({ curr }) => (curr as any).includes(bp)),
     ),
 
 
@@ -132,11 +132,11 @@ const breakpoints = <
      *
      * @param range  an array containing a range of breakpoints
      *
-     * @returns an Oberservable containing entering/leaving the breakpoint range
+     * @returns an Observable containing entering/leaving the breakpoint range
      */
     breakpointsInRange(
       range: K[],
-    ) {
+    ): Observable<boolean> {
       const isInRange = (bpl: K[]) => breakpointListContainsBreakpoints(bpl, range)
       return breakpointsChanges$.pipe(
         map(({
