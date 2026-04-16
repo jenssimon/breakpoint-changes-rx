@@ -2,7 +2,7 @@
 # Manual changes might be lost - proceed with caution!
 
 __metadata:
-  version: 8
+  version: 9
   cacheKey: 10c0
 
 "@actions/core@npm:^3.0.0":
@@ -661,8 +661,8 @@ __metadata:
   linkType: hard
 
 "@jenssimon/eslint-config-base@npm:^10.0.1":
-  version: 10.2.2
-  resolution: "@jenssimon/eslint-config-base@npm:10.2.2"
+  version: 10.2.3
+  resolution: "@jenssimon/eslint-config-base@npm:10.2.3"
   dependencies:
     "@eslint-community/eslint-plugin-eslint-comments": "npm:^4.6.0"
     eslint-plugin-promise: "npm:^7.2.1"
@@ -671,7 +671,7 @@ __metadata:
   peerDependencies:
     eslint: ">= 9"
     eslint-config-airbnb-extended: ">= 3"
-  checksum: 10c0/745ff7fa4dcf1539259f16b14efae325b194ede63b0686aa11dd6c77badac75f0bc03da5dcf99a229ccbafd672cc60ad0454c3aa437467202f3986c4b6d3337f
+  checksum: 10c0/3e11e210b34866ce3d0152756f6f4cad1341d99faabf0f888d6e07c880ae425684aaa6281a3865fa98f2c93c17ae28ff770deb62b1bdf52663bab4d277a3afab
   languageName: node
   linkType: hard
 
@@ -1908,8 +1908,8 @@ __metadata:
   linkType: hard
 
 "@vitest/eslint-plugin@npm:^1.1.16":
-  version: 1.6.15
-  resolution: "@vitest/eslint-plugin@npm:1.6.15"
+  version: 1.6.16
+  resolution: "@vitest/eslint-plugin@npm:1.6.16"
   dependencies:
     "@typescript-eslint/scope-manager": "npm:^8.58.0"
     "@typescript-eslint/utils": "npm:^8.58.0"
@@ -1925,7 +1925,7 @@ __metadata:
       optional: true
     vitest:
       optional: true
-  checksum: 10c0/267a5f3a75f7f010882cfbc97eba61045cd9e1b35361b8212817b9f0fe4cfc8ee018996b6a302d801a58ee4b6a77aa8d6ef5f49294a9261df19ad9ab2aa68ae9
+  checksum: 10c0/b2871ce12b831ea1e1ff8cf01d978d0746aaeac951830880ad966ad2783de4fbe835a1c74c44f5bccca73ca6007174cd0434c2725269cfafdcc6fbb43d4da495
   languageName: node
   linkType: hard
 
