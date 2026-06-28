@@ -52,16 +52,16 @@ const breakpoints = <
     bp: K,
   ) => (bpl as any).includes(bp)
 
-  const breakpointListContainsBreakpoints = (
+  const didBreakpointListContainsBreakpoints = (
     bpl: K[],
     bps: K[],
   ) => bps.some(
     (bp) => (bpl as any).includes(bp),
   )
 
-  const includesBreakpoints = (
+  const didIncludesBreakpoints = (
     bps: K[],
-  ) => breakpointListContainsBreakpoints(
+  ) => didBreakpointListContainsBreakpoints(
     getCurrentBreakpoints(),
     bps,
   )
@@ -86,7 +86,7 @@ const breakpoints = <
      */
     includesBreakpoints: (
       bps: K[],
-    ) => breakpointListContainsBreakpoints(
+    ) => didBreakpointListContainsBreakpoints(
       getCurrentBreakpoints(),
       bps,
     ),
@@ -100,7 +100,7 @@ const breakpoints = <
      */
     includesBreakpoint: (
       bp: K,
-    ) => includesBreakpoints([bp]),
+    ) => didIncludesBreakpoints([bp]),
 
 
     /**
@@ -137,7 +137,7 @@ const breakpoints = <
     breakpointsInRange(
       range: K[],
     ): Observable<boolean> {
-      const isInRange = (bpl: K[]) => breakpointListContainsBreakpoints(bpl, range)
+      const isInRange = (bpl: K[]) => didBreakpointListContainsBreakpoints(bpl, range)
       return breakpointsChanges$.pipe(
         map(({
           curr,
