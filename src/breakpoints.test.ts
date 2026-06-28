@@ -49,7 +49,7 @@ const mqFor = (
 
 
 const mockMatchMedia = (
-  matches: (query: string) => boolean,
+  hasMatches: (query: string) => boolean,
 ) => {
   const matchMediaQueries: string[] = []
   const mqlListeners = new Map<string, AnyFunction>()
@@ -58,7 +58,7 @@ const mockMatchMedia = (
   const matchMediaImpl = vi.fn().mockImplementation((query: string) => {
     matchMediaQueries.push(query)
     return {
-      matches: matches(query), // "lg" matches
+      matches: hasMatches(query), // "lg" matches
       media: query,
       onchange: undefined,
       addEventListener: (event: string, fnc: AnyFunction): void => {
