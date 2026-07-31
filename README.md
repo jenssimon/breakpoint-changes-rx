@@ -1,4 +1,4 @@
-[![NPM version][npm-image]][npm-url] [![Downloads][npm-downloads-image]][npm-url] [![star this repo][gh-stars-image]][gh-url] [![fork this repo][gh-forks-image]][gh-url] [![CI][gh-status-image]][gh-status-url] [![Coverage Status][coveralls-image]][coveralls-url]
+[![NPM version][npm-image]][npm-url] [![Downloads][npm-downloads-image]][npm-url]
 
 # breakpoint-changes-rx
 
@@ -30,7 +30,7 @@ console.log(
 ## Install
 
 ```sh
-yarn add breakpoint-changes-rx
+pnpm add breakpoint-changes-rx
 ```
 
 ## `breakpoints(breakpointDefinitions)`
@@ -219,10 +219,3 @@ vp pack
 [npm-url]: https://www.npmjs.com/package/breakpoint-changes-rx
 [npm-image]: https://badgen.net/npm/v/breakpoint-changes-rx
 [npm-downloads-image]: https://badgen.net/npm/dw/breakpoint-changes-rx
-[gh-url]: https://github.com/jenssimon/breakpoint-changes-rx
-[gh-stars-image]: https://badgen.net/github/stars/jenssimon/breakpoint-changes-rx
-[gh-forks-image]: https://badgen.net/github/forks/jenssimon/breakpoint-changes-rx
-[gh-status-image]: https://github.com/jenssimon/breakpoint-changes-rx/actions/workflows/ci.yml/badge.svg
-[gh-status-url]: https://github.com/jenssimon/breakpoint-changes-rx/actions/workflows/ci.yml
-[coveralls-url]: https://coveralls.io/github/jenssimon/breakpoint-changes-rx?branch=main
-[coveralls-image]: https://coveralls.io/repos/github/jenssimon/breakpoint-changes-rx/badge.svg?branch=main
