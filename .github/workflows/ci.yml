@@ -32,7 +32,7 @@ jobs:
         run: vp check
 
       - name: Run tests
-        run: vp test
+        run: vp test --coverage
 
       - name: Run builds
         run: vp pack
