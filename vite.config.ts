@@ -16,6 +16,11 @@ export default defineConfig({
       typeCheck: true,
     },
   },
+  test: {
+    coverage: {
+      reporter: ["text", "json", "html", "cobertura"],
+    },
+  },
   fmt: {
     semi: false,
   },
