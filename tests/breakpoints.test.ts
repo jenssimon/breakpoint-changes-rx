@@ -313,8 +313,8 @@ describe("detect breakpoint changes", () => {
     const breakpointRangeObservable = vi.fn()
     bp.breakpointsInRange(["sm", "md"]).subscribe(breakpointRangeObservable)
 
-    const [smListener, mdListener, lgListener] = ["sm", "md", "lg"].map(
-      (bpName) => mqlListeners.get(mqFor(bpName, bpData))!,
+    const [smListener, mdListener, lgListener] = ["sm", "md", "lg"].map((bpName) =>
+      mqlListeners.get(mqFor(bpName, bpData))!,
     )
 
     // change to "md"
