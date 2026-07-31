@@ -1,29 +1,22 @@
-import {
-  vi,
-  describe, expect, it,
-} from 'vitest'
+import { vi, describe, expect, it } from "vite-plus/test"
 
-import breakpoints, { parseBreakpoints } from './breakpoints.js'
-
-import type { BreakpointDefinitions } from './types.js'
-
+import breakpoints, { parseBreakpoints, type BreakpointDefinitions } from "../src/index.js"
 
 type AnyFunction = (arguments_?: unknown) => unknown
 
 const TEST_BREAKPOINT_DATA = {
-  sm: { max: '767px' },
-  md: { min: '768px', max: '991px' },
-  lg: { min: '992px', max: '1199px' },
-  xl: { min: '1200px' },
+  sm: { max: "767px" },
+  md: { min: "768px", max: "991px" },
+  lg: { min: "992px", max: "1199px" },
+  xl: { min: "1200px" },
 }
 
 // for multiple matches add additional breakpoints
 const TEST_BREAKPOINT_DATA_MULTIPLE_MATCHES = {
   ...TEST_BREAKPOINT_DATA,
-  mdx: { min: '768px', max: '849px' },
-  mdy: { min: '850px', max: '991px' },
+  mdx: { min: "768px", max: "849px" },
+  mdy: { min: "850px", max: "991px" },
 }
-
 
 /**
  * Generates a media query for a breakpoint.
@@ -32,25 +25,22 @@ const TEST_BREAKPOINT_DATA_MULTIPLE_MATCHES = {
  * @param bps  the breakpoint definitions
  * @return the media query for the breakpoint
  */
-const mqFor = (
-  breakpoint: string,
-  bps: BreakpointDefinitions,
-) => (
+const mqFor = (breakpoint: string, bps: BreakpointDefinitions) =>
   Object.entries(bps)
     .filter(([name]) => name === breakpoint)
-    .map(([, { min, max }]) => [
-      ['min', min], ['max', max],
-    ]
-      .filter(([, value]) => value)
-      .map(([string_, value]) => `(${string_}-width: ${value})`)
-      .join(' and '))
-// eslint-disable-next-line unicorn/no-array-reduce
-).reduce((previous, current) => current, '')
+    .map(([, { min, max }]) =>
+      [
+        ["min", min],
+        ["max", max],
+      ]
+        .filter(([, value]) => value)
+        .map(([string_, value]) => `(${string_}-width: ${value})`)
+        .join(" and "),
+    )
+    // eslint-disable-next-line unicorn/no-array-reduce
+    .reduce((previous, current) => current, "")
 
-
-const mockMatchMedia = (
-  hasMatches: (query: string) => boolean,
-) => {
+const mockMatchMedia = (hasMatches: (query: string) => boolean) => {
   const matchMediaQueries: string[] = []
   const mqlListeners = new Map<string, AnyFunction>()
 
@@ -68,7 +58,7 @@ const mockMatchMedia = (
     }
   })
 
-  Object.defineProperty(globalThis, 'matchMedia', {
+  Object.defineProperty(globalThis, "matchMedia", {
     writable: true,
     value: matchMediaImpl,
   })
@@ -81,24 +71,23 @@ const mockMatchMedia = (
   }
 }
 
-
 /*
  * parseBreakpoints()
  */
-describe('parseBreakpoints', () => {
+describe("parseBreakpoints", () => {
   it.each([
     [
-      'parses breakpoint information from a possible return value of a CSS module',
+      "parses breakpoint information from a possible return value of a CSS module",
       {
-        'foo-sm-min': '100px',
-        'breakpoint-xl-min': '1200px',
-        foo: 'bar',
-        'breakpoint-sm-max': '767px',
-        'breakpoint-md-max': '991px',
+        "foo-sm-min": "100px",
+        "breakpoint-xl-min": "1200px",
+        foo: "bar",
+        "breakpoint-sm-max": "767px",
+        "breakpoint-md-max": "991px",
         bar: true,
-        'breakpoint-lg-min': '992px',
-        'breakpoint-md-min': '768px',
-        'breakpoint-lg-max': '1199px',
+        "breakpoint-lg-min": "992px",
+        "breakpoint-md-min": "768px",
+        "breakpoint-lg-max": "1199px",
         baz: 123,
       },
       undefined,
@@ -108,10 +97,10 @@ describe('parseBreakpoints', () => {
     ],
 
     [
-      'can use a custom config (regular expression)',
+      "can use a custom config (regular expression)",
       {
-        'breakpoint-sm-max': '767px',
-        'bp-sm-max': '500px',
+        "breakpoint-sm-max": "767px",
+        "bp-sm-max": "500px",
       },
       {
         regex: /^bp-(\w*)-((max)|(min))$/,
@@ -119,15 +108,15 @@ describe('parseBreakpoints', () => {
 
       // expected
       {
-        sm: { max: '500px' },
+        sm: { max: "500px" },
       },
     ],
 
     [
-      'can use a custom config (regular expression with groupName)',
+      "can use a custom config (regular expression with groupName)",
       {
-        'breakpoint-sm-max': '767px',
-        'breakpoint-ab-sm-max': '500px',
+        "breakpoint-sm-max": "767px",
+        "breakpoint-ab-sm-max": "500px",
       },
       {
         regex: /^breakpoint-(ab-(\w*))-((max)|(min))$/,
@@ -136,15 +125,15 @@ describe('parseBreakpoints', () => {
 
       // expected
       {
-        sm: { max: '500px' },
+        sm: { max: "500px" },
       },
     ],
 
     [
-      'can use a custom config (regular expression with groupMinMax)',
+      "can use a custom config (regular expression with groupMinMax)",
       {
-        'breakpoint-sm-max': '767px',
-        'breakpoint-xm-xmax': '500px',
+        "breakpoint-sm-max": "767px",
+        "breakpoint-xm-xmax": "500px",
       },
       {
         regex: /^breakpoint-(\w*)-(x)((max)|(min))$/,
@@ -153,50 +142,49 @@ describe('parseBreakpoints', () => {
 
       // expected
       {
-        xm: { max: '500px' },
+        xm: { max: "500px" },
       },
     ],
 
     [
-      'can use a custom config  (regular expression with isMin() function)',
+      "can use a custom config  (regular expression with isMin() function)",
       {
-        'breakpoint-sm-min': '767px',
-        'breakpoint-xm-mini': '500px',
+        "breakpoint-sm-min": "767px",
+        "breakpoint-xm-mini": "500px",
       },
       {
         regex: /^breakpoint-(\w*)-((maxi)|(mini))$/,
-        isMin: (value: string) => value === 'mini',
+        isMin: (value: string) => value === "mini",
       },
 
       // expected
       {
-        xm: { min: '500px' },
+        xm: { min: "500px" },
       },
     ],
-  ])('%s', (name, sample, options, expected) => {
+  ])("%s", (name, sample, options, expected) => {
     expect(parseBreakpoints(sample, options)).toStrictEqual(expected)
   })
 })
 
-
-describe('initialization and detect breakpoints on init', () => {
-  it('initializes with one detected breakpoint', () => {
-    const {
-      matchMediaQueries, listenerMock, matchMediaImpl,
-    } = mockMatchMedia((query) => query === mqFor('lg', TEST_BREAKPOINT_DATA)) // "lg" matches
+describe("initialization and detect breakpoints on init", () => {
+  it("initializes with one detected breakpoint", () => {
+    const { matchMediaQueries, listenerMock, matchMediaImpl } = mockMatchMedia(
+      (query) => query === mqFor("lg", TEST_BREAKPOINT_DATA),
+    ) // "lg" matches
 
     const bp = breakpoints(TEST_BREAKPOINT_DATA as BreakpointDefinitions)
 
     expect(matchMediaImpl).toHaveBeenCalledTimes(4) // 4 breakpoints -> 4 matchMedia calls
 
     // are the correct media queries used?
-    for (const bpName of ['sm', 'md', 'lg', 'xl']) {
+    for (const bpName of ["sm", "md", "lg", "xl"]) {
       expect(matchMediaQueries).toContain(mqFor(bpName, TEST_BREAKPOINT_DATA))
     }
 
     expect(listenerMock).toHaveBeenCalledTimes(4) // listeners for all media queries added?
 
-    expect(bp.getCurrentBreakpoints()).toStrictEqual(['lg'])
+    expect(bp.getCurrentBreakpoints()).toStrictEqual(["lg"])
 
     const bpSubscriber = vi.fn()
     bp.breakpointsChanges$.subscribe(bpSubscriber)
@@ -208,30 +196,25 @@ describe('initialization and detect breakpoints on init', () => {
 
     expect(bpBehaviorSubscriber).toHaveBeenCalledTimes(1)
     expect(bpBehaviorSubscriber.mock.calls[0][0]).toStrictEqual({
-      curr: ['lg'], prev: [],
+      curr: ["lg"],
+      prev: [],
     })
 
     // includesBreakpoint()
-    for (const bpName of ['sm', 'md', 'lg', 'xl', 'foo']) {
-      expect(bp.includesBreakpoint(bpName)).toBe(bpName === 'lg')
+    for (const bpName of ["sm", "md", "lg", "xl", "foo"]) {
+      expect(bp.includesBreakpoint(bpName)).toBe(bpName === "lg")
     }
 
     // includesBreakpoints()
-    for (const bpNames of [
-      ['sm'], ['md'], ['lg'], ['xl'], ['foo'],
-      ['sm', 'md'], ['lg', 'xl'],
-    ]) {
-      expect(bp.includesBreakpoints(bpNames)).toBe(bpNames.includes('lg'))
+    for (const bpNames of [["sm"], ["md"], ["lg"], ["xl"], ["foo"], ["sm", "md"], ["lg", "xl"]]) {
+      expect(bp.includesBreakpoints(bpNames)).toBe(bpNames.includes("lg"))
     }
   })
 
-
-  it('initializes with multiple detected breakpoints', () => {
-    const {
-      matchMediaQueries, listenerMock, matchMediaImpl,
-    } = mockMatchMedia((query) => ['md', 'mdx']
-      .map((bp) => mqFor(bp, TEST_BREAKPOINT_DATA_MULTIPLE_MATCHES))
-      .includes(query)) // "md" and "mdx" matches
+  it("initializes with multiple detected breakpoints", () => {
+    const { matchMediaQueries, listenerMock, matchMediaImpl } = mockMatchMedia((query) =>
+      ["md", "mdx"].map((bp) => mqFor(bp, TEST_BREAKPOINT_DATA_MULTIPLE_MATCHES)).includes(query),
+    ) // "md" and "mdx" matches
 
     const bp = breakpoints(TEST_BREAKPOINT_DATA_MULTIPLE_MATCHES)
 
@@ -246,38 +229,48 @@ describe('initialization and detect breakpoints on init', () => {
     bp.breakpointsChangesBehavior$.subscribe(bpBehaviorSubscriber)
 
     expect(bpBehaviorSubscriber).toHaveBeenCalledTimes(1)
-    expect(bpBehaviorSubscriber.mock.calls[0][0]).toStrictEqual({ curr: ['md', 'mdx'], prev: [] })
+    expect(bpBehaviorSubscriber.mock.calls[0][0]).toStrictEqual({ curr: ["md", "mdx"], prev: [] })
 
-    for (const bpName of ['sm', 'md', 'mdx', 'mdy', 'lg', 'xl']) {
+    for (const bpName of ["sm", "md", "mdx", "mdy", "lg", "xl"]) {
       expect(matchMediaQueries).toContain(mqFor(bpName, TEST_BREAKPOINT_DATA_MULTIPLE_MATCHES))
     }
 
     expect(listenerMock).toHaveBeenCalledTimes(6)
 
-    expect(bp.getCurrentBreakpoints()).toStrictEqual(['md', 'mdx'])
+    expect(bp.getCurrentBreakpoints()).toStrictEqual(["md", "mdx"])
 
     // includesBreakpoint()
-    for (const bpName of ['sm', 'md', 'mdx', 'mdy', 'lg', 'xl', 'foo']) {
-      expect(bp.includesBreakpoint(bpName as 'sm')).toBe(['md', 'mdx'].includes(bpName))
+    for (const bpName of ["sm", "md", "mdx", "mdy", "lg", "xl", "foo"]) {
+      expect(bp.includesBreakpoint(bpName as "sm")).toBe(["md", "mdx"].includes(bpName))
     }
 
     // includesBreakpoints()
     for (const bpNames of [
-      ['sm'], ['md'], ['mdx'], ['mdy'], ['lg'], ['xl'], ['foo'],
-      ['sm', 'md'], ['md', 'mdx'], ['md', 'mdy'], ['md', 'lg'], ['mdx', 'mdy'], ['mdy', 'lg'], ['lg', 'xl'],
+      ["sm"],
+      ["md"],
+      ["mdx"],
+      ["mdy"],
+      ["lg"],
+      ["xl"],
+      ["foo"],
+      ["sm", "md"],
+      ["md", "mdx"],
+      ["md", "mdy"],
+      ["md", "lg"],
+      ["mdx", "mdy"],
+      ["mdy", "lg"],
+      ["lg", "xl"],
     ]) {
-      expect(bp.includesBreakpoints(bpNames as 'md'[])).toBe(
-        bpNames.includes('md')
-        || bpNames.includes('mdx'),
+      expect(bp.includesBreakpoints(bpNames as "md"[])).toBe(
+        bpNames.includes("md") || bpNames.includes("mdx"),
       )
     }
   })
 
-
-  it('initializes with number values for a breakpoint', () => {
-    const {
-      matchMediaQueries, listenerMock, matchMediaImpl,
-    } = mockMatchMedia((query) => query === '(min-width: 768px) and (max-width: 991px)')
+  it("initializes with number values for a breakpoint", () => {
+    const { matchMediaQueries, listenerMock, matchMediaImpl } = mockMatchMedia(
+      (query) => query === "(min-width: 768px) and (max-width: 991px)",
+    )
 
     const bp = breakpoints({
       md: { min: 768, max: 991 },
@@ -286,42 +279,43 @@ describe('initialization and detect breakpoints on init', () => {
     expect(matchMediaImpl).toHaveBeenCalledTimes(1) // 1 breakpoints -> 1 matchMedia calls
 
     // are the correct media queries used?
-    expect(matchMediaQueries).toContain('(min-width: 768px) and (max-width: 991px)')
+    expect(matchMediaQueries).toContain("(min-width: 768px) and (max-width: 991px)")
 
     expect(listenerMock).toHaveBeenCalledTimes(1) // listeners for all media queries added?
 
-    expect(bp.getCurrentBreakpoints()).toStrictEqual(['md'])
+    expect(bp.getCurrentBreakpoints()).toStrictEqual(["md"])
   })
 })
 
-
-describe('detect breakpoint changes', () => {
-  it('detects breakpoint change (single breakpoint scenario)', () => {
+describe("detect breakpoint changes", () => {
+  it("detects breakpoint change (single breakpoint scenario)", () => {
     const bpData = TEST_BREAKPOINT_DATA
     vi.useFakeTimers()
-    const { mqlListeners } = mockMatchMedia((query) => [
-      mqFor('lg', bpData), // initial match "lg"
-    ].includes(query))
+    const { mqlListeners } = mockMatchMedia((query) =>
+      [
+        mqFor("lg", bpData), // initial match "lg"
+      ].includes(query),
+    )
 
     const bp = breakpoints(bpData)
 
-    expect(bp.getCurrentBreakpoints()).toStrictEqual(['lg'])
+    expect(bp.getCurrentBreakpoints()).toStrictEqual(["lg"])
 
     const breakpointChangesObservable = vi.fn()
     bp.breakpointsChanges$.subscribe(breakpointChangesObservable)
 
-    const [smObservable, mdObservable, lgObservable] = ['sm', 'md', 'lg']
-      .map((bpName) => {
-        const mock = vi.fn()
-        bp.breakpointsChange(bpName as 'sm').subscribe(mock)
-        return mock
-      })
+    const [smObservable, mdObservable, lgObservable] = ["sm", "md", "lg"].map((bpName) => {
+      const mock = vi.fn()
+      bp.breakpointsChange(bpName as "sm").subscribe(mock)
+      return mock
+    })
 
     const breakpointRangeObservable = vi.fn()
-    bp.breakpointsInRange(['sm', 'md']).subscribe(breakpointRangeObservable)
+    bp.breakpointsInRange(["sm", "md"]).subscribe(breakpointRangeObservable)
 
-    const [smListener, mdListener, lgListener] = ['sm', 'md', 'lg']
-      .map((bpName) => mqlListeners.get(mqFor(bpName, bpData))!)
+    const [smListener, mdListener, lgListener] = ["sm", "md", "lg"].map(
+      (bpName) => mqlListeners.get(mqFor(bpName, bpData))!,
+    )
 
     // change to "md"
     mdListener({ matches: true })
@@ -329,7 +323,10 @@ describe('detect breakpoint changes', () => {
     vi.runOnlyPendingTimers()
 
     expect(breakpointChangesObservable).toHaveBeenCalledTimes(1)
-    expect(breakpointChangesObservable.mock.calls[0][0]).toStrictEqual({ curr: ['md'], prev: ['lg'] })
+    expect(breakpointChangesObservable.mock.calls[0][0]).toStrictEqual({
+      curr: ["md"],
+      prev: ["lg"],
+    })
 
     expect(mdObservable).toHaveBeenCalledTimes(1)
     expect(mdObservable.mock.calls[0][0]).toBe(true)
@@ -346,7 +343,10 @@ describe('detect breakpoint changes', () => {
     vi.runOnlyPendingTimers()
 
     expect(breakpointChangesObservable).toHaveBeenCalledTimes(2)
-    expect(breakpointChangesObservable.mock.calls[1][0]).toStrictEqual({ curr: ['sm'], prev: ['md'] })
+    expect(breakpointChangesObservable.mock.calls[1][0]).toStrictEqual({
+      curr: ["sm"],
+      prev: ["md"],
+    })
 
     expect(mdObservable).toHaveBeenCalledTimes(2)
     expect(mdObservable.mock.calls[1][0]).toBe(false)
@@ -364,7 +364,10 @@ describe('detect breakpoint changes', () => {
     vi.runOnlyPendingTimers()
 
     expect(breakpointChangesObservable).toHaveBeenCalledTimes(3)
-    expect(breakpointChangesObservable.mock.calls[2][0]).toStrictEqual({ curr: ['lg'], prev: ['sm'] })
+    expect(breakpointChangesObservable.mock.calls[2][0]).toStrictEqual({
+      curr: ["lg"],
+      prev: ["sm"],
+    })
 
     expect(mdObservable).toHaveBeenCalledTimes(2)
 
@@ -378,31 +381,37 @@ describe('detect breakpoint changes', () => {
     expect(breakpointRangeObservable.mock.calls[1][0]).toBe(false)
   })
 
-
-  it('detects breakpoint change (multiple breakpoint scenario)', () => {
+  it("detects breakpoint change (multiple breakpoint scenario)", () => {
     vi.useFakeTimers()
 
-    const { mqlListeners } = mockMatchMedia((query) => [
-      mqFor('lg', TEST_BREAKPOINT_DATA_MULTIPLE_MATCHES), // initial match "lg"
-    ].includes(query))
+    const { mqlListeners } = mockMatchMedia((query) =>
+      [
+        mqFor("lg", TEST_BREAKPOINT_DATA_MULTIPLE_MATCHES), // initial match "lg"
+      ].includes(query),
+    )
 
     const bp = breakpoints(TEST_BREAKPOINT_DATA_MULTIPLE_MATCHES)
 
     const breakpointChangesObservable = vi.fn()
     bp.breakpointsChanges$.subscribe(breakpointChangesObservable)
 
-    const [mdObservable, mdxObservable, mdyObservable, lgObservable] = ['md', 'mdx', 'mdy', 'lg']
-      .map((bpName) => {
-        const mock = vi.fn()
-        bp.breakpointsChange(bpName as 'sm').subscribe(mock)
-        return mock
-      })
+    const [mdObservable, mdxObservable, mdyObservable, lgObservable] = [
+      "md",
+      "mdx",
+      "mdy",
+      "lg",
+    ].map((bpName) => {
+      const mock = vi.fn()
+      bp.breakpointsChange(bpName as "sm").subscribe(mock)
+      return mock
+    })
 
     const breakpointRangeObservable = vi.fn()
-    bp.breakpointsInRange(['sm', 'md']).subscribe(breakpointRangeObservable)
+    bp.breakpointsInRange(["sm", "md"]).subscribe(breakpointRangeObservable)
 
-    const [mdListener, mdxListener, mdyListener, lgListener] = ['md', 'mdx', 'mdy', 'lg']
-      .map((bpName) => mqlListeners.get(mqFor(bpName, TEST_BREAKPOINT_DATA_MULTIPLE_MATCHES))!)
+    const [mdListener, mdxListener, mdyListener, lgListener] = ["md", "mdx", "mdy", "lg"].map(
+      (bpName) => mqlListeners.get(mqFor(bpName, TEST_BREAKPOINT_DATA_MULTIPLE_MATCHES))!,
+    )
 
     // switch to "md" and "mdx"
     mdListener({ matches: true })
@@ -411,7 +420,10 @@ describe('detect breakpoint changes', () => {
     vi.runOnlyPendingTimers()
 
     expect(breakpointChangesObservable).toHaveBeenCalledTimes(1)
-    expect(breakpointChangesObservable.mock.calls[0][0]).toStrictEqual({ curr: ['md', 'mdx'], prev: ['lg'] })
+    expect(breakpointChangesObservable.mock.calls[0][0]).toStrictEqual({
+      curr: ["md", "mdx"],
+      prev: ["lg"],
+    })
 
     expect(mdObservable).toHaveBeenCalledTimes(1)
     expect(mdObservable.mock.calls[0][0]).toBe(true)
@@ -433,7 +445,10 @@ describe('detect breakpoint changes', () => {
     vi.runOnlyPendingTimers()
 
     expect(breakpointChangesObservable).toHaveBeenCalledTimes(2)
-    expect(breakpointChangesObservable.mock.calls[1][0]).toStrictEqual({ curr: ['md', 'mdy'], prev: ['md', 'mdx'] })
+    expect(breakpointChangesObservable.mock.calls[1][0]).toStrictEqual({
+      curr: ["md", "mdy"],
+      prev: ["md", "mdx"],
+    })
 
     expect(mdObservable).toHaveBeenCalledTimes(1)
 
@@ -454,7 +469,10 @@ describe('detect breakpoint changes', () => {
     vi.runOnlyPendingTimers()
 
     expect(breakpointChangesObservable).toHaveBeenCalledTimes(3)
-    expect(breakpointChangesObservable.mock.calls[2][0]).toStrictEqual({ curr: ['lg'], prev: ['md', 'mdy'] })
+    expect(breakpointChangesObservable.mock.calls[2][0]).toStrictEqual({
+      curr: ["lg"],
+      prev: ["md", "mdy"],
+    })
 
     expect(mdObservable).toHaveBeenCalledTimes(2)
     expect(mdObservable.mock.calls[1][0]).toBe(false)

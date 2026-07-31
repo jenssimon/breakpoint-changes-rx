@@ -9,14 +9,14 @@ You have a responsive web site and want to handle viewport state with ease?
 Here we are. Handing viewport state with the help of RxJS.
 
 ```typescript
-import breakpoints, { parseBreakpoints } from 'breakpoint-changes-rx'
-import style from './style.scss'
+import breakpoints, { parseBreakpoints } from "breakpoint-changes-rx"
+import style from "./style.scss"
 
 const breakpointDefinitions = parseBreakpoints(style)
 
 const bps = breakpoints(breakpointDefinitions)
 
-console.log('current breakpoints: %o', bps.getCurrentBreakpoints())
+console.log("current breakpoints: %o", bps.getCurrentBreakpoints())
 ```
 
 ## What are the current viewports?
@@ -51,19 +51,19 @@ This function initializes the breakpoint detection and returns an object contain
   - [Configuration](#configuration)
     - [Format](#format)
     - [`parseBreakpoints(object, config)`](#parsebreakpointsobject-config)
-  - [License](#license)
+  - [Development](#development)
 
 For details about the breakpointDefinitions see [Configuration](#Configuration) section
 
 ```typescript
-import breakpoints, { parseBreakpoints } from 'breakpoint-changes-rx'
-import style from './style.scss'
+import breakpoints, { parseBreakpoints } from "breakpoint-changes-rx"
+import style from "./style.scss"
 
 const breakpointDefinitions = parseBreakpoints(style)
 
 const bps = breakpoints(breakpointDefinitions)
 
-console.log('current breakpoints: %o', bps.getCurrentBreakpoints())
+console.log("current breakpoints: %o", bps.getCurrentBreakpoints())
 ```
 
 ### `breakpointsChanges$`
@@ -80,11 +80,8 @@ An [observable](https://rxjs-dev.firebaseapp.com/guide/observable) that emits a 
 Usage example:
 
 ```typescript
-bps.breakpointChanges$.subscribe(({
-  curr,
-  prev,
-}) => {
-  console.log('previous breakpoint is %o, actual breakpoint is %o', prev, curr)
+bps.breakpointChanges$.subscribe(({ curr, prev }) => {
+  console.log("previous breakpoint is %o, actual breakpoint is %o", prev, curr)
 })
 ```
 
@@ -101,7 +98,7 @@ Returns the current active breakpoints as an array.
 ```typescript
 const current = bp.getCurrentBreakpoints()
 
-console.log('current breakpoints are %o', current) // e.g. ['lg']
+console.log("current breakpoints are %o", current) // e.g. ['lg']
 ```
 
 ### `breakpointsChange(bp)`
@@ -109,8 +106,8 @@ console.log('current breakpoints are %o', current) // e.g. ['lg']
 Returns an observable that emits a `boolean` value when the given breakpoint gets entered or left.
 
 ```typescript
-bp.breakpointsChange('md').subscribe((active) => {
-  console.log('breakpoint md %s', active ? 'entered' : 'left')
+bp.breakpointsChange("md").subscribe((active) => {
+  console.log("breakpoint md %s", active ? "entered" : "left")
 })
 ```
 
@@ -119,8 +116,8 @@ bp.breakpointsChange('md').subscribe((active) => {
 Returns an observable that emits a `boolean` value when a range of breakpoints gets entered or left. If a change appears between the given range no value gets emitted.
 
 ```typescript
-bp.breakpointsInRange(['sm', 'md']).subscribe((active) => {
-  console.log('range gets %s', active ? 'entered' : 'left')
+bp.breakpointsInRange(["sm", "md"]).subscribe((active) => {
+  console.log("range gets %s", active ? "entered" : "left")
 })
 ```
 
@@ -129,7 +126,7 @@ bp.breakpointsInRange(['sm', 'md']).subscribe((active) => {
 Returns `true` if the current breakpoints contain breakpoints which are part of the given `array`.
 
 ```typescript
-console.log('this might be a mobile device %o', bp.includesBreakpoints(['sm', 'md']))
+console.log("this might be a mobile device %o", bp.includesBreakpoints(["sm", "md"]))
 ```
 
 ### `includesBreakpoint(bp)`
@@ -137,19 +134,19 @@ console.log('this might be a mobile device %o', bp.includesBreakpoints(['sm', 'm
 Returns `true` if the given breakpoint is part of the current active breakpoints.
 
 ```typescript
-console.log('breakpoint "md" is active %o', bp.includesBreakpoint('md'))
+console.log('breakpoint "md" is active %o', bp.includesBreakpoint("md"))
 ```
 
 ## Configuration
 
-This section describes the configuration used by the [breakpoints(breakpointDefinitions)](#breakpoints(breakpointDefinitions)) function using this example
+This section describes the configuration used by the [breakpoints(breakpointDefinitions)](<#breakpoints(breakpointDefinitions)>) function using this example
 
-Breakpoint name | min    | max
-----------------|----------|----------
-sm              |          |  `767px`
-md              |  `768px` |  `991px`
-lg              |  `991px` | `1199px`
-xl              | `1200px` |
+| Breakpoint name | min      | max      |
+| --------------- | -------- | -------- |
+| sm              |          | `767px`  |
+| md              | `768px`  | `991px`  |
+| lg              | `991px`  | `1199px` |
+| xl              | `1200px` |
 
 ### Format
 
@@ -182,8 +179,8 @@ This function was created to parse breakpoint data from [exported variables of a
 ```
 
 ```typescript
-import { parseBreakpoints } from 'breakpoint-changes-rx'
-import style from './style.scss'
+import { parseBreakpoints } from "breakpoint-changes-rx"
+import style from "./style.scss"
 
 const breakpointDefinitions = parseBreakpoints(style)
 ```
@@ -192,26 +189,40 @@ It filters all properties of the passed object that matches the breakpoint patte
 
 This function can use an optional configuration.
 
-Name          | Description                                                                            | Default
---------------|----------------------------------------------------------------------------------------|--------------------------------------
-`regex`       | A regular expression describing the breakpoint naming to parse                         | `/^breakpoint-(\w*)-((max)\|(min))$/`
-`groupName`   | The index of the capture group that contains the name of the breakpoint                | `1`
-`groupMinMax` | The capture group index that contains the identifier for min or max of the breakpoint  | `2`
-`isMin`       | A function that returns `true` if the given min/max value represents min               | `(val) => val === nameMin`
+| Name          | Description                                                                           | Default                               |
+| ------------- | ------------------------------------------------------------------------------------- | ------------------------------------- |
+| `regex`       | A regular expression describing the breakpoint naming to parse                        | `/^breakpoint-(\w*)-((max)\|(min))$/` |
+| `groupName`   | The index of the capture group that contains the name of the breakpoint               | `1`                                   |
+| `groupMinMax` | The capture group index that contains the identifier for min or max of the breakpoint | `2`                                   |
+| `isMin`       | A function that returns `true` if the given min/max value represents min              | `(val) => val === nameMin`            |
 
-## License
+## Development
 
-MIT © 2023 [Jens Simon](https://github.com/jenssimon)
+- Install dependencies:
+
+```bash
+vp install
+```
+
+- Run the unit tests:
+
+```bash
+vp test
+```
+
+- Build the library:
+
+```bash
+vp pack
+```
 
 [npm-url]: https://www.npmjs.com/package/breakpoint-changes-rx
 [npm-image]: https://badgen.net/npm/v/breakpoint-changes-rx
 [npm-downloads-image]: https://badgen.net/npm/dw/breakpoint-changes-rx
-
 [gh-url]: https://github.com/jenssimon/breakpoint-changes-rx
 [gh-stars-image]: https://badgen.net/github/stars/jenssimon/breakpoint-changes-rx
 [gh-forks-image]: https://badgen.net/github/forks/jenssimon/breakpoint-changes-rx
 [gh-status-image]: https://github.com/jenssimon/breakpoint-changes-rx/actions/workflows/ci.yml/badge.svg
 [gh-status-url]: https://github.com/jenssimon/breakpoint-changes-rx/actions/workflows/ci.yml
-
 [coveralls-url]: https://coveralls.io/github/jenssimon/breakpoint-changes-rx?branch=main
 [coveralls-image]: https://coveralls.io/repos/github/jenssimon/breakpoint-changes-rx/badge.svg?branch=main

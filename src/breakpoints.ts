@@ -1,23 +1,14 @@
-import { BehaviorSubject, Observable } from 'rxjs'
-import {
-  filter, map, bufferTime, share,
-} from 'rxjs/operators'
+import { BehaviorSubject, Observable } from "rxjs"
+import { filter, map, bufferTime, share } from "rxjs/operators"
 
+import fromBreakpointDefinitions from "./from-breakpoint-definitions.js"
+import breakpointHits from "./breakpoint-hits.js"
 
-import fromBreakpointDefinitions from './from-breakpoint-definitions.js'
-import breakpointHits from './breakpoint-hits.js'
+import type { BreakpointDefinitions } from "./types.js"
 
-import type * as types from './types.js'
-
-export type BreakpointDefinition = types.BreakpointDefinition
-export type BreakpointDefinitions = types.BreakpointDefinitions
-export type BreakpointParseConfig = types.BreakpointParseConfig
-
-
-const breakpoints = <
-  T extends BreakpointDefinitions,
-  K extends keyof T,
->(breakpointDefinitions: T) => {
+const breakpoints = <T extends BreakpointDefinitions, K extends keyof T>(
+  breakpointDefinitions: T,
+) => {
   const initialBreakpoints: K[] = []
 
   const breakpointsChanges$ = fromBreakpointDefinitions(
@@ -47,29 +38,17 @@ const breakpoints = <
     return bps
   }
 
-  const breakpointListContainsBreakpoint = (
-    bpl: K[],
-    bp: K,
-  ) => (bpl as any).includes(bp)
+  const breakpointListContainsBreakpoint = (bpl: K[], bp: K) => (bpl as any).includes(bp)
 
-  const didBreakpointListContainsBreakpoints = (
-    bpl: K[],
-    bps: K[],
-  ) => bps.some(
-    (bp) => (bpl as any).includes(bp),
-  )
+  const didBreakpointListContainsBreakpoints = (bpl: K[], bps: K[]) =>
+    bps.some((bp) => (bpl as any).includes(bp))
 
-  const didIncludesBreakpoints = (
-    bps: K[],
-  ) => didBreakpointListContainsBreakpoints(
-    getCurrentBreakpoints(),
-    bps,
-  )
+  const didIncludesBreakpoints = (bps: K[]) =>
+    didBreakpointListContainsBreakpoints(getCurrentBreakpoints(), bps)
 
   return {
     breakpointsChanges$,
     breakpointsChangesBehavior$,
-
 
     /**
      * Returns the current breakpoint names.
@@ -78,19 +57,13 @@ const breakpoints = <
      */
     getCurrentBreakpoints,
 
-
     /**
      * Returns true if the current breakpoints contain breakpoints which are part of the given array.
      *
      * @param bps an array of breakpoint names
      */
-    includesBreakpoints: (
-      bps: K[],
-    ) => didBreakpointListContainsBreakpoints(
-      getCurrentBreakpoints(),
-      bps,
-    ),
-
+    includesBreakpoints: (bps: K[]) =>
+      didBreakpointListContainsBreakpoints(getCurrentBreakpoints(), bps),
 
     /**
      * Returns `true` if the given breakpoint is part of the current active breakpoints.
@@ -98,10 +71,7 @@ const breakpoints = <
      * @param bp the breakpoint
      * @returns `true` if the breakpoint is included in current breakpoints
      */
-    includesBreakpoint: (
-      bp: K,
-    ) => didIncludesBreakpoints([bp]),
-
+    includesBreakpoint: (bp: K) => didIncludesBreakpoints([bp]),
 
     /**
      * Create an observable emitting values for entering or leaving a breakpoint.
@@ -110,22 +80,16 @@ const breakpoints = <
      *
      * @returns an Observerable containing entering/leaving the breakpoint
      */
-    breakpointsChange: (
-      bp: K,
-    ) => breakpointsChanges$.pipe(
-      filter(({
-        curr,
-        prev,
-      }) => [curr, prev].some((b) => breakpointListContainsBreakpoint(b, bp))),
+    breakpointsChange: (bp: K) =>
+      breakpointsChanges$.pipe(
+        filter(({ curr, prev }) =>
+          [curr, prev].some((b) => breakpointListContainsBreakpoint(b, bp)),
+        ),
 
-      filter(({
-        curr,
-        prev,
-      }) => (curr as any).includes(bp) !== (prev as any).includes(bp)),
+        filter(({ curr, prev }) => (curr as any).includes(bp) !== (prev as any).includes(bp)),
 
-      map(({ curr }) => (curr as any).includes(bp)),
-    ),
-
+        map(({ curr }) => (curr as any).includes(bp)),
+      ),
 
     /**
      * Create an observable emitting values for entering or leaving a breakpoint range
@@ -134,32 +98,20 @@ const breakpoints = <
      *
      * @returns an Observable containing entering/leaving the breakpoint range
      */
-    breakpointsInRange(
-      range: K[],
-    ): Observable<boolean> {
+    breakpointsInRange(range: K[]): Observable<boolean> {
       const isInRange = (bpl: K[]) => didBreakpointListContainsBreakpoints(bpl, range)
       return breakpointsChanges$.pipe(
-        map(({
-          curr,
-          prev,
-        }) => ({
+        map(({ curr, prev }) => ({
           curr: isInRange(curr),
           prev: isInRange(prev),
         })),
 
-        filter(({
-          curr,
-          prev,
-        }) => curr !== prev),
+        filter(({ curr, prev }) => curr !== prev),
 
-        map(({
-          curr,
-        }) => curr),
+        map(({ curr }) => curr),
       )
     },
   }
 }
 
-
 export default breakpoints
-export { default as parseBreakpoints } from './parse-breakpoints.js'
