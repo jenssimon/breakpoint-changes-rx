@@ -42,7 +42,8 @@ jobs:
         with:
           file: coverage/cobertura-coverage.xml
           language: JavaScript
-          label: code-coverage/breakpoint-changes-rx
+          label: code-coverage/vitest
+          fail-on-error: false
 
   release:
     needs: [validate]
