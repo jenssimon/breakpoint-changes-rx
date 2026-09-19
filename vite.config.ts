@@ -5,9 +5,6 @@ export default defineConfig({
     "*": "vp check --fix",
   },
   pack: {
-    dts: {
-      tsgo: true,
-    },
     exports: true,
   },
   lint: {
